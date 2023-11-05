@@ -1,0 +1,127 @@
+{
+	"version": 3,
+	"cmakeMinimumRequired":
+	{
+		"major": 3,
+		"minor": 21,
+		"patch": 0
+	},
+	"configurePresets":
+	[
+		{
+			"name":      "windows-host",
+			"hidden":    true,
+			"condition": {"lhs":"${hostSystemName}", "type": "equals", "rhs":  "Windows"}
+		},
+		{
+			"name":      "non-windows-host",
+			"hidden":    true,
+			"condition": {"lhs":"${hostSystemName}", "type":"notEquals", "rhs":"Windows"}
+		},
+		{
+			"name":      "native-target",
+			"hidden":    true,
+			"binaryDir": "${sourceDir}/build/${hostSystemName}-${presetName}",
+			"cacheVariables":
+			{
+				"RMGR_DETECT_BUILD_TESTS":        true,
+				"CMAKE_ARCHIVE_OUTPUT_DIRECTORY": {"type":"PATH", "value":"${sourceDir}/lib/${hostSystemName}-${presetName}"},
+				"CMAKE_LIBRARY_OUTPUT_DIRECTORY": {"type":"PATH", "value":"${sourceDir}/bin/${hostSystemName}-${presetName}"},
+				"CMAKE_RUNTIME_OUTPUT_DIRECTORY": {"type":"PATH", "value":"${sourceDir}/bin/${hostSystemName}-${presetName}"},
+				"CMAKE_INSTALL_PREFIX":           {"type":"PATH", "value":"${sourceDir}/package}"}
+			}
+		},
+		{
+			"name":      "windows-target",
+			"hidden":    true,
+			"binaryDir": "${sourceDir}/build/Windows-${presetName}",
+			"cacheVariables":
+			{
+				"RMGR_DETECT_BUILD_TESTS":        true,
+				"CMAKE_ARCHIVE_OUTPUT_DIRECTORY": {"type":"PATH", "value":"${sourceDir}/lib/Windows-${presetName}"},
+				"CMAKE_LIBRARY_OUTPUT_DIRECTORY": {"type":"PATH", "value":"${sourceDir}/bin/Windows-${presetName}"},
+				"CMAKE_RUNTIME_OUTPUT_DIRECTORY": {"type":"PATH", "value":"${sourceDir}/bin/Windows-${presetName}"},
+				"CMAKE_INSTALL_PREFIX":           {"type":"PATH", "value":"${sourceDir}/package}"}
+			}
+		},
+		{
+			"name":           "ninja",
+			"hidden":         true,
+			"generator":      "Ninja Multi-Config",
+			"inherits":       ["non-windows-host"]
+		},
+		{
+			"name":           "nmake",
+			"hidden":         true,
+			"generator":      "NMake Makefiles",
+			"binaryDir":      "${sourceDir}/build/windows-${presetName}",
+			"inherits":       ["windows-host", "windows-target"]
+		},
+		{
+			"name":           "vs",
+			"hidden":         true,
+			"binaryDir":      "${sourceDir}/build/windows-${presetName}",
+			"inherits":       ["windows-host", "windows-target"]
+		},
+		{
+			"name":           "gcc",
+			"hidden":         true,
+			"environment":    {"CC":"gcc", "CXX":"g++"}
+		},
+		{
+			"name":           "clang",
+			"hidden":         true,
+			"environment":    {"CC":"clang", "CXX":"clang++"}
+		},
+		{
+			"name":           "debug",
+			"hidden":         true,
+			"cacheVariables": {"CMAKE_BUILD_TYPE":{"type":"STRING", "value":"Debug"}}
+		},
+
+		{"name":"mingw-gcc-i686",   "hidden":true, "toolchainFile":"${sourceDir}/tests/mingw-gcc-i686.cmake"},
+		{"name":"mingw-gcc-x86_64", "hidden":true, "toolchainFile":"${sourceDir}/tests/mingw-gcc-x86_64.cmake"},
+		{"name":"mingw-clang-i686",   "hidden":true, "toolchainFile":"${sourceDir}/tests/mingw-clang-i686.cmake"},
+		{"name":"mingw-clang-x86_64", "hidden":true, "toolchainFile":"${sourceDir}/tests/mingw-clang-x86_64.cmake"},
+
+		{"name":"vs2015", "hidden":true, "generator":"Visual Studio 14 2015", "inherits": ["vs"]},
+		{"name":"vs2017", "hidden":true, "generator":"Visual Studio 15 2017", "inherits": ["vs"]},
+		{"name":"vs2019", "hidden":true, "generator":"Visual Studio 16 2019", "inherits": ["vs"]},
+		{"name":"vs2022", "hidden":true, "generator":"Visual Studio 17 2022", "inherits": ["vs"]},
+
+		{"name":"vs2015-msvc",       "displayName":"VS2015",          "inherits":["vs2015"]},
+		{"name":"vs2015-clang_c2",   "displayName":"VS2015 Clang/C2", "inherits":["vs2015"], "toolset":"v140_clang_c2"},
+		{"name":"vs2017-msvc",       "displayName":"VS2017",          "inherits":["vs2017"]},
+		{"name":"vs2017-clang_c2",   "displayName":"VS2017 Clang/C2", "inherits":["vs2017"], "toolset":"v141_clang_c2"},
+		{"name":"vs2019-msvc",       "displayName":"VS2019",          "inherits":["vs2019"]},
+		{"name":"vs2019-clangcl",    "displayName":"VS2019 ClangCL",  "inherits":["vs2019"], "toolset":"ClangCL"},
+		{"name":"vs2022-msvc",       "displayName":"VS2022",          "inherits":["vs2022"]},
+		{"name":"vs2022-clangcl",    "displayName":"VS2022 ClangCL",  "inherits":["vs2022"], "toolset":"ClangCL"},
+		{"name":"vs2022-icl-19.2",   "displayName":"VS2022 ICX 19.2", "inherits":["vs2022"], "toolset":"Intel C++ Compiler 19.2"},
+		{"name":"vs2022-icx-2023",   "displayName":"VS2022 ICX 2023", "inherits":["vs2022"], "toolset":"Intel C++ Compiler 2023"},
+
+		{"name":"nmake-clang-debug", "displayName":"NMake + Clang",   "inherits":["nmake", "clang", "debug"]},
+
+		{"name":"ninja-gcc",         "inherits":["native-target",  "ninja", "gcc"]},
+		{"name":"ninja-clang",       "inherits":["native-target",  "ninja", "clang"]},
+		{"name":"ninja-mingw-gcc",   "inherits":["windows-target", "ninja", "mingw-gcc-i686"]},
+		{"name":"ninja-mingw-clang", "inherits":["windows-target", "ninja", "mingw-clang-i686"]}
+	],
+	"buildPresets":
+	[
+		{"name":"vs2015-msvc-debug",     "configurePreset":"vs2015-msvc",       "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-detect-tests"]},
+		{"name":"vs2015-clang_c2-debug", "configurePreset":"vs2015-clang_c2",   "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-detect-tests"]},
+		{"name":"vs2017-msvc-debug",     "configurePreset":"vs2017-msvc",       "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-detect-tests"]},
+		{"name":"vs2017-clang_c2-debug", "configurePreset":"vs2017-clang_c2",   "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-detect-tests"]},
+		{"name":"vs2019-msvc-debug",     "configurePreset":"vs2019-msvc",       "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-detect-tests"]},
+		{"name":"vs2019-clangcl-debug",  "configurePreset":"vs2019-clangcl",    "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-detect-tests"]},
+		{"name":"vs2022-msvc-debug",     "configurePreset":"vs2022-msvc",       "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-detect-tests"]},
+		{"name":"vs2022-clangcl-debug",  "configurePreset":"vs2022-clangcl",    "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-detect-tests"]},
+
+		{"name":"nmake-clang-debug",     "configurePreset":"nmake-clang-debug", "displayName":"Debug",                          "targets":["rmgr-detect-tests"]},
+
+		{"name":"ninja-gcc-debug",       "configurePreset":"ninja-gcc",         "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-detect-tests"]},
+		{"name":"ninja-clang-debug",     "configurePreset":"ninja-clang",       "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-detect-tests"]},
+		{"name":"ninja-mingw-gcc-debug", "configurePreset":"ninja-mingw-gcc",   "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-detect-tests"]}
+	]
+}
