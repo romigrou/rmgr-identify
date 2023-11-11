@@ -1,20 +1,20 @@
 /*
  * This software is available under 2 licenses -- choose whichever you prefer.
- * 
+ *
  * -------------------------------------------------------------------------------
- * 
+ *
  * Copyright (c) 2023 Romain BAILLY
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
  * the Software without restriction, including without limitation the rights to
  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
  * of the Software, and to permit persons to whom the Software is furnished to do
  * so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,16 +22,16 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- * 
+ *
  * -------------------------------------------------------------------------------
- * 
+ *
  * This is free and unencumbered software released into the public domain.
- * 
+ *
  * Anyone is free to copy, modify, publish, use, compile, sell, or
  * distribute this software, either in source code form or as a compiled
  * binary, for any purpose, commercial or non-commercial, and by any
  * means.
- * 
+ *
  * In jurisdictions that recognize copyright laws, the author or authors
  * of this software dedicate any and all copyright interest in the
  * software to the public domain. We make this dedication for the benefit
@@ -39,7 +39,7 @@
  * successors. We intend this dedication to be an overt act of
  * relinquishment in perpetuity of all present and future rights to this
  * software under copyright law.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -47,7 +47,7 @@
  * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * For more information, please refer to <https://unlicense.org/>
  */
 
@@ -186,7 +186,7 @@
 #elif defined(__INTEL_COMPILER)
     /**
      * @def   RMGR_COMPILER_BACKEND_IS_ICC
-     * @brief Whether the compiler back-end is Intel's ICC
+     * @brief Whether the compiler back-end is Intel C++ Compiler Classic
      */
     #define RMGR_COMPILER_BACKEND_IS_ICC         (1)
     #if __INTEL_COMPILER >= 2000
@@ -258,13 +258,32 @@
 #ifdef __MINGW32__
     #define RMGR_COMPILER_VARIANT_IS_MINGW  (1)
 #elif RMGR_COMPILER_FRONTEND_IS_CLANG && RMGR_COMPILER_BACKEND_IS_LLVM
-    #if defined(__INTEL_CLANG_COMPILER) || defined(__INTEL_LLVM_COMPILER)
-        #define RMGR_COMPILER_VARIANT_IS_ICX  (1)
+    #if defined(__aocc__)
+        /**
+         * @def   RMGR_COMPILER_VARIANT_IS_AOCC
+         * @brief Whether the compiler variant is AMD Optimizing C/C++
+         */
+        #define RMGR_COMPILER_VARIANT_IS_AOCC        (1)
+        #define RMGR_COMPILER_VARIANT_VERSION_MAJOR  (__aocc_major__)
+        #define RMGR_COMPILER_VARIANT_VERSION_MINOR  (__aocc_minor__)
+        #define RMGR_COMPILER_VARIANT_VERSION_PATCH  (__aocc_patchlevel__)
+    #elif defined(__INTEL_CLANG_COMPILER)
+        /**
+         * @def   RMGR_COMPILER_VARIANT_IS_ICX
+         * @brief Whether the compiler variant is Intel oneAPI DPC++/C++
+         */
+        #define RMGR_COMPILER_VARIANT_IS_ICX         (1)
+        #define RMGR_COMPILER_VARIANT_VERSION_MAJOR  (__INTEL_CLANG_COMPILER / 10000)
+        #define RMGR_COMPILER_VARIANT_VERSION_MINOR  ((__INTEL_CLANG_COMPILER / 100) % 100)
+        #define RMGR_COMPILER_VARIANT_VERSION_PATCH  (__INTEL_CLANG_COMPILER % 100)
     #endif
 #endif
 
 
 /* Set default values to undefined macros */
+#ifndef RMGR_COMPILER_VARIANT_IS_AOCC
+    #define RMGR_COMPILER_VARIANT_IS_AOCC   (0)
+#endif
 #ifndef RMGR_COMPILER_VARIANT_IS_MINGW
     #define RMGR_COMPILER_VARIANT_IS_MINGW  (0)
 #endif

@@ -71,3 +71,9 @@ derived from Clang/LVVM.
    Clang front-end with MSVC back-end. This was provided as a temporary solution to have modern C++
    support in MSVC while Microsoft reworked their own front-end. This was available in Visual Studio 2015 and 2017.
  - EDG and Intellisense: although MSVC has its own front-end, [Intellisense uses EDG's front-end](https://devblogs.microsoft.com/cppblog/rebuilding-intellisense/).
+
+License
+-------
+
+This software is available either under the zlib license or the Unlicense, pick the one you prefer
+out of those two. For details, refer to the [LICENSE](LICENSE) file.

@@ -51,6 +51,14 @@ if (RMGR_DETECT_BUILD_TESTS)
         set(RMGR_DETECT_TESTS_EXPECTED_FRONTEND_VERSION "\"${CMAKE_CXX_COMPILER_VERSION}\"")
         set(RMGR_DETECT_TESTS_EXPECTED_BACKEND          "\"LLVM\"")
         set(RMGR_DETECT_TESTS_EXPECTED_BACKEND_VERSION  "\"${CMAKE_CXX_COMPILER_VERSION}\"")
+        include(CheckCXXSymbolExists)
+        check_cxx_symbol_exists("__aocc__" "" __aocc__)
+        if (__aocc__)
+            set(RMGR_DETECT_TESTS_EXPECTED_VARIANT               "\"AOCC\"")
+            set(RMGR_DETECT_TESTS_EXPECTED_VARIANT_VERSION_MAJOR "__aocc_major__")
+            set(RMGR_DETECT_TESTS_EXPECTED_VARIANT_VERSION_MINOR "__aocc_minor__")
+            set(RMGR_DETECT_TESTS_EXPECTED_VARIANT_VERSION_PATCH "__aocc_patchlevel__")
+        endif()
     elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
         set(RMGR_DETECT_TESTS_EXPECTED_FRONTEND         "\"EDG\"")
         set(RMGR_DETECT_TESTS_EXPECTED_FRONTEND_VERSION "\"6\"") # TODO: retrieve actual version
@@ -62,6 +70,7 @@ if (RMGR_DETECT_BUILD_TESTS)
         set(RMGR_DETECT_TESTS_EXPECTED_BACKEND          "\"LLVM\"")
         set(RMGR_DETECT_TESTS_EXPECTED_BACKEND_VERSION  __clang_version__)
         set(RMGR_DETECT_TESTS_EXPECTED_VARIANT          "\"ICX\"")
+        set(RMGR_DETECT_TESTS_EXPECTED_VARIANT_VERSION  "\"${CMAKE_CXX_COMPILER_VERSION}\"")
     else()
         message(FATAL_ERROR "Unsupported/unrecognized compiler")
     endif()
@@ -75,6 +84,15 @@ if (RMGR_DETECT_BUILD_TESTS)
 
     if (DEFINED RMGR_DETECT_TESTS_EXPECTED_VARIANT)
         target_compile_definitions(rmgr-detect-tests PRIVATE "EXPECTED_VARIANT=${RMGR_DETECT_TESTS_EXPECTED_VARIANT}")
+    endif()
+    if (DEFINED RMGR_DETECT_TESTS_EXPECTED_VARIANT_VERSION)
+        target_compile_definitions(rmgr-detect-tests PRIVATE "EXPECTED_VARIANT_VERSION=${RMGR_DETECT_TESTS_EXPECTED_VARIANT_VERSION}")
+    elseif (DEFINED RMGR_DETECT_TESTS_EXPECTED_VARIANT_VERSION_MAJOR)
+        target_compile_definitions(rmgr-detect-tests PRIVATE
+            "EXPECTED_VARIANT_VERSION_MAJOR=${RMGR_DETECT_TESTS_EXPECTED_VARIANT_VERSION_MAJOR}"
+            "EXPECTED_VARIANT_VERSION_MINOR=${RMGR_DETECT_TESTS_EXPECTED_VARIANT_VERSION_MINOR}"
+            "EXPECTED_VARIANT_VERSION_PATCH=${RMGR_DETECT_TESTS_EXPECTED_VARIANT_VERSION_PATCH}"
+        )
     endif()
 
     set_property(DIRECTORY . PROPERTY VS_STARTUP_PROJECT "rmgr-detect-tests")
