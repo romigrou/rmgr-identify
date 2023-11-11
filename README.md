@@ -71,6 +71,19 @@ derived from Clang/LVVM.
    Clang front-end with MSVC back-end. This was provided as a temporary solution to have modern C++
    support in MSVC while Microsoft reworked their own front-end. This was available in Visual Studio 2015 and 2017.
  - EDG and Intellisense: although MSVC has its own front-end, [Intellisense uses EDG's front-end](https://devblogs.microsoft.com/cppblog/rebuilding-intellisense/).
+ - [llvmgcc](https://releases.llvm.org/1.0/docs/CommandGuide/llvmgcc.html): GCC front-end with LLVM back-end. This dates from the days before Clang was available.
+
+
+The C Library
+-------------
+
+This is another widely-encountered mistake: confusing the compiler with the C library. For instance how
+you should check for a `float` being a `NaN` (`isnanf()`, `_isnanf()`, `__isnanf()` or `isnan()`?) does
+not depend on the compiler but on the C library (although there might be intrinsics to consider too).
+
+A good rule of thumb is that if an identifier's name begins with a single `_` then it belongs to the library
+whereas those beginning with two `_` are provided by the compiler (i.e. intrinsics, macros, built-in types, ...).
+But keep in mind this is just a rule of thumb, it's not perfect.
 
 License
 -------

@@ -52,23 +52,11 @@
  */
 
 #include <rmgr/detect-compiler.h>
-#include <cctype>
 #include <cstdio>
-#include <cstdlib>
 #include <cstring>
 
 
-static bool check_version_numbers(const char* v1, const char* v2)
-{
-    while (*v1 && *v1==*v2)
-    {
-        ++v1;
-        ++v2;
-    }
-
-    // It's OK for numbers to differ iff one is more detailed than the other one
-    return (!*v1 && !isdigit(*v2)) || (!*v2 && !isdigit(*v1));
-}
+bool check_version_numbers(const char* v1, const char* v2);
 
 
 #ifndef EXPECTED_VARIANT_VERSION
@@ -82,8 +70,11 @@ static bool check_version_numbers(const char* v1, const char* v2)
 #endif
 
 
-int main()
+bool rmgr_detect_compiler_tests()
 {
+    bool success = true;
+
+
 #if RMGR_COMPILER_FRONTEND_IS_CLANG
     static const char frontEndName[] = {"Clang"};
 #endif
@@ -148,38 +139,37 @@ int main()
     if (strcmp(frontEndName, EXPECTED_FRONTEND) != 0)
     {
         fprintf(stderr, "Front-end mismatch\n");
-        return EXIT_FAILURE;
+        success = false;
     }
     if (!check_version_numbers(frontEndVersion, EXPECTED_FRONTEND_VERSION))
     {
         fprintf(stderr, "Front-end version mismatch\n");
-        return EXIT_FAILURE;
+        success = false;
     }
 
     if (strcmp(backEndName, EXPECTED_BACKEND) != 0)
     {
         fprintf(stderr, "Back-end mismatch\n");
-        return EXIT_FAILURE;
+        success = false;
     }
     if (!check_version_numbers(backEndVersion, EXPECTED_BACKEND_VERSION))
     {
         fprintf(stderr, "Back-end version mismatch\n");
-        return EXIT_FAILURE;
+        success = false;
     }
 
 #ifdef EXPECTED_VARIANT
     if (strcmp(variantName, EXPECTED_VARIANT) != 0)
     {
         fprintf(stderr, "Variant mismatch\n");
-        return EXIT_FAILURE;
+        success = false;
     }
     if (strcmp(variantVersion, EXPECTED_VARIANT_VERSION) != 0)
     {
         fprintf(stderr, "Variant version mismatch\n");
-        return EXIT_FAILURE;
+        success = false;
     }
 #endif
 
-    printf("Success!\n");
-    return EXIT_SUCCESS;
+    return success;
 }

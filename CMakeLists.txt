@@ -22,7 +22,10 @@ target_include_directories(rmgr-detect INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/in
 if (RMGR_DETECT_BUILD_TESTS)
     add_executable(rmgr-detect-tests
         "tests/rmgr-detect-tests.cpp"
+        "tests/rmgr-detect-compiler-tests.cpp"
+        "tests/rmgr-detect-runtime-tests.cpp"
         "include/rmgr/detect-compiler.h"
+        "include/rmgr/detect-runtime.h"
     )
     target_link_libraries(rmgr-detect-tests PRIVATE rmgr-detect)
     if (MINGW)
@@ -30,7 +33,6 @@ if (RMGR_DETECT_BUILD_TESTS)
         set(RMGR_DETECT_TESTS_EXPECTED_VARIANT "\"MinGW\"")
     endif()
 
-    message("CMAKE_CXX_COMPILER_ID = \"${CMAKE_CXX_COMPILER_ID}\"")
     if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
         set(RMGR_DETECT_TESTS_EXPECTED_FRONTEND         "\"MSVC\"")
         set(RMGR_DETECT_TESTS_EXPECTED_FRONTEND_VERSION "\"${CMAKE_CXX_COMPILER_VERSION}\"")
@@ -75,11 +77,22 @@ if (RMGR_DETECT_BUILD_TESTS)
         message(FATAL_ERROR "Unsupported/unrecognized compiler")
     endif()
 
-   target_compile_definitions(rmgr-detect-tests PRIVATE
+    if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
+        set(RMGR_DETECT_TESTS_EXPECTED_CRT "\"glibc\"")
+    elseif (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+        set(RMGR_DETECT_TESTS_EXPECTED_CRT "\"MSVCRT\"")
+    elseif (CYGWIN)
+        set(RMGR_DETECT_TESTS_EXPECTED_CRT "\"Newlib\"")
+    else()
+        message(FATAL_ERROR "Unsupported/unrecognized platform")
+    endif()
+
+    target_compile_definitions(rmgr-detect-tests PRIVATE
        "EXPECTED_FRONTEND=${RMGR_DETECT_TESTS_EXPECTED_FRONTEND}"
        "EXPECTED_FRONTEND_VERSION=${RMGR_DETECT_TESTS_EXPECTED_FRONTEND_VERSION}"
        "EXPECTED_BACKEND=${RMGR_DETECT_TESTS_EXPECTED_BACKEND}"
        "EXPECTED_BACKEND_VERSION=${RMGR_DETECT_TESTS_EXPECTED_BACKEND_VERSION}"
+       "EXPECTED_CRT=${RMGR_DETECT_TESTS_EXPECTED_CRT}"
     )
 
     if (DEFINED RMGR_DETECT_TESTS_EXPECTED_VARIANT)

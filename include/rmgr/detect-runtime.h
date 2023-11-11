@@ -1,0 +1,160 @@
+/*
+ * This software is available under 2 licenses -- choose whichever you prefer.
+ *
+ * -------------------------------------------------------------------------------
+ *
+ * Copyright (c) 2023 Romain BAILLY
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ * of the Software, and to permit persons to whom the Software is furnished to do
+ * so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ * -------------------------------------------------------------------------------
+ *
+ * This is free and unencumbered software released into the public domain.
+ *
+ * Anyone is free to copy, modify, publish, use, compile, sell, or
+ * distribute this software, either in source code form or as a compiled
+ * binary, for any purpose, commercial or non-commercial, and by any
+ * means.
+ *
+ * In jurisdictions that recognize copyright laws, the author or authors
+ * of this software dedicate any and all copyright interest in the
+ * software to the public domain. We make this dedication for the benefit
+ * of the public at large and to the detriment of our heirs and
+ * successors. We intend this dedication to be an overt act of
+ * relinquishment in perpetuity of all present and future rights to this
+ * software under copyright law.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+ * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * For more information, please refer to <https://unlicense.org/>
+ */
+
+
+#ifndef RMGR_DETECT_RUNTIME_H
+#define RMGR_DETECT_RUNTIME_H
+
+/* The minimal header that seems to allow us to identify the C library seems to be string.h.
+   However, if we can include a more pinpointed header, let's do it. */
+#ifdef __has_include
+    #if __has_include(<_newlib_version.h>)
+        #include <_newlib_version.h>
+    #elif __has_include(<features.h>)
+        #include <features.h>
+    #elif defined(__cplusplus)
+        #include <cstring>
+    #else
+        #include "string.h"
+    #endif
+#else
+    #ifdef __cplusplus
+        #include <cstring>
+    #else
+        #include "string.h"
+    #endif
+#endif
+
+/* ========================================================================= */
+/* Detect the C library                                                      */
+
+#if defined(__GNU_LIBRARY__)
+    /**
+     * @def   RMGR_CRT_IS_GLIBC
+     * @brief Whether the C library is glibc
+     */
+    #define RMGR_CRT_IS_GLIBC       (1)
+    #if defined(__GLIBC__)
+        #define RMGR_CRT_VERSION_MAJOR  (__GLIBC__)
+        #define RMGR_CRT_VERSION_MINOR  (__GLIBC_MINOR__)
+    #else
+        #define RMGR_CRT_VERSION_MAJOR  (__GNU_LIBRARY__)
+        #define RMGR_CRT_VERSION_MINOR  (__GNU_LIBRARY_MINOR__)
+    #endif
+
+#elif defined(__NEWLIB__)
+    /**
+     * @def   RMGR_CRT_IS_NEWLIB
+     * @brief Whether the C library is Newlilb
+     */
+    #define RMGR_CRT_IS_NEWLIB      (1)
+    #define RMGR_CRT_VERSION_MAJOR  (__NEWLIB__)
+    #define RMGR_CRT_VERSION_MINOR  (__NEWLIB_MINOR__)
+    #define RMGR_CRT_VERSION_PATCH  (__NEWLIB_PATCHLEVEL__)
+
+#elif defined(_WIN32)
+    #ifdef __MINGW32__
+        #include <_mingw.h>
+        #define RMGR_CRT_IS_MSVCRT  (1)
+        #ifdef MSVCRT_VERSION
+            #define RMGR_CRT_VERSION_MAJOR  (MSVCRT_VERSION / 100)
+            #define RMGR_CRT_VERSION_MINOR  (MSVCRT_VERSION % 100)
+        #elif defined(__MSVCRT_VERSION__)
+            #define RMGR_CRT_VERSION_MAJOR  (__MSVCRT_VERSION__ / 256)
+            #define RMGR_CRT_VERSION_MINOR  (__MSVCRT_VERSION__ % 256)
+        #else
+            #error Cannot determine the version of MSVCRT
+        #endif
+    #elif defined(__has_include) && !__has_include(<vcruntime.h>)
+        /* This check is just for extra safety but, AFAIK, MSVCRT is the only C library used on Windows */
+        #define RMGR_CRT_IS_UNKNOWN  (1)
+        #error qscsvsv
+    #else
+        #include <crtversion.h>
+        /**
+         * @def   RMGR_CRT_IS_MSVRCT
+         * @brief Whether the C library is MSVCRT
+         */
+        #define RMGR_CRT_IS_MSVCRT      (1)
+        #define RMGR_CRT_VERSION_MAJOR  (_VC_CRT_MAJOR_VERSION)
+        #define RMGR_CRT_VERSION_MINOR  (_VC_CRT_MINOR_VERSION)
+        #define RMGR_CRT_VERSION_PATCH  (_VC_CRT_BUILD_VERSION)
+    #endif
+#else
+    #define RMGR_CRT_IS_UNKNOWN     (1)
+#endif
+
+#if RMGR_CRT_IS_UNKNOWN && defined(RMGR_DETECT_NO_FAILURE)
+    #error Unsupported/unrecognized C library
+#endif
+
+
+/* Set default values to undefined macros */
+#ifndef RMGR_CRT_IS_GLIBC
+    #define RMGR_CRT_IS_GLIBC       (0)
+#endif
+#ifndef RMGR_CRT_IS_MSVCRT
+    #define RMGR_CRT_IS_MSVCRT      (0)
+#endif
+#ifndef RMGR_CRT_IS_NEWLIB
+    #define RMGR_CRT_IS_NEWLIB      (0)
+#endif
+#ifndef RMGR_CRT_IS_UNKNOWN
+    #define RMGR_CRT_IS_UNKNOWN     (0)
+#endif
+#ifndef RMGR_CRT_VERSION_PATCH
+    #define RMGR_CRT_VERSION_PATCH  (0)
+#endif
+
+
+#endif /* RMGR_DETECT_RUNTIME_H */

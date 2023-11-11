@@ -139,6 +139,8 @@
     #define RMGR_COMPILER_FRONTEND_VERSION_PATCH  (__GNUC_PATCHLEVEL__)
 #endif
 
+#elif defined(RMGR_DETECT_NO_FAILURE)
+    #define RMGR_COMPILER_FRONTEND_IS_UNKNOWN     (1)
 #else
     #error Unsupported/unrecognized compiler front-end
 #endif
@@ -159,6 +161,9 @@
 #endif
 #ifndef RMGR_COMPILER_FRONTEND_IS_MSVC
     #define RMGR_COMPILER_FRONTEND_IS_MSVC        (0)
+#endif
+#ifndef RMGR_COMPILER_FRONTEND_IS_UNKNOWN
+    #define RMGR_COMPILER_FRONTEND_IS_UNKNOWN     (0)
 #endif
 #ifndef RMGR_COMPILER_FRONTEND_VERSION_PATCH
     #define RMGR_COMPILER_FRONTEND_VERSION_PATCH  (0)
@@ -226,6 +231,8 @@
     #define RMGR_COMPILER_BACKEND_VERSION_PATCH   (__GNUC_PATCHLEVEL__)
 #endif
 
+#elif defined(RMGR_DETECT_NO_FAILURE)
+    #define RMGR_COMPILER_BACKEND_IS_UNKNOWN      (1)
 #else
     #error Unsupported/unrecognized compiler back-end
 #endif
@@ -276,7 +283,15 @@
         #define RMGR_COMPILER_VARIANT_VERSION_MAJOR  (__INTEL_CLANG_COMPILER / 10000)
         #define RMGR_COMPILER_VARIANT_VERSION_MINOR  ((__INTEL_CLANG_COMPILER / 100) % 100)
         #define RMGR_COMPILER_VARIANT_VERSION_PATCH  (__INTEL_CLANG_COMPILER % 100)
+    #else
+        #define RMGR_COMPILER_VARIANT_IS_UNKNOWN     (1)
     #endif
+#else
+    /**
+     * @def   RMGR_COMPILER_VARIANT_IS_UNKNOWN
+     * @brief If non-zero, the compiler variant is unknown (or is not a variant at all)
+     */
+    #define RMGR_COMPILER_VARIANT_IS_UNKNOWN     (1)
 #endif
 
 
@@ -284,39 +299,54 @@
 #ifndef RMGR_COMPILER_VARIANT_IS_AOCC
     #define RMGR_COMPILER_VARIANT_IS_AOCC   (0)
 #endif
-#ifndef RMGR_COMPILER_VARIANT_IS_MINGW
-    #define RMGR_COMPILER_VARIANT_IS_MINGW  (0)
-#endif
 #ifndef RMGR_COMPILER_VARIANT_IS_ICX
     #define RMGR_COMPILER_VARIANT_IS_ICX    (0)
+#endif
+#ifndef RMGR_COMPILER_VARIANT_IS_MINGW
+    #define RMGR_COMPILER_VARIANT_IS_MINGW  (0)
 #endif
 
 
 /* ========================================================================= */
 /* Utility macros                                                            */
 
-#define INTERNAL_RMGR_VERSION_COMP_LT(a1,a2,a3,b1,b2,b3)                (a1 < b1 || (a1 == b1 && (a2 < b2 || (a2 == b2 && a3 < b3))))
-#define INTERNAL_RMGR_VERSION_IS_LESS_THAN(name,major,minor,patch)      INTERNAL_RMGR_VERSION_COMP_LT(name##_MAJOR, name##_MINOR, name##_PATCH, major, minor, patch)
+#ifndef INTERNAL_RMGR_VERSION_COMP_LT
+    #define INTERNAL_RMGR_VERSION_COMP_LT(a1,a2,a3,b1,b2,b3)            ((a1) < (b1) || ((a1) == (b1) && ((a2) < (b2) || ((a2) == (b2) && (a3) < (b3)))))
+#endif
+
+#ifndef RMGR_VERSION_IS_LESS_THAN
+    /**
+     * @brief Evaluates to non-zero if the version number is < the specified one
+     */
+    #define RMGR_VERSION_IS_LESS_THAN(name,major,minor,patch)           INTERNAL_RMGR_VERSION_COMP_LT(name##_MAJOR, name##_MINOR, name##_PATCH, major, minor, patch)
+#endif
+
+#ifndef RMGR_VERSION_IS_GREATER_THAN
+    /**
+     * @brief Evaluates to non-zero if the version number is >= the specified one
+     */
+    #define RMGR_VERSION_IS_GREATER_THAN(name,major,minor,patch)        !(INTERNAL_RMGR_VERSION_COMP_LT(name##_MAJOR, name##_MINOR, name##_PATCH, major, minor, patch))
+#endif
 
 /**
  * @brief Evaluates to non-zero if the compiler front-end's version is < the specified one
  */
-#define RMGR_COMPILER_FRONTEND_VERSION_IS_LESS_THAN(major,minor,patch)  INTERNAL_RMGR_VERSION_IS_LESS_THAN(RMGR_COMPILER_FRONTEND_VERSION, (major), (minor), (patch))
+#define RMGR_COMPILER_FRONTEND_VERSION_IS_LESS_THAN(major,minor,patch)  RMGR_VERSION_IS_LESS_THAN(RMGR_COMPILER_FRONTEND_VERSION, major, minor, patch)
 
 /**
  * @brief Evaluates to non-zero if the compiler front-end's version is >= the specified one
  */
-#define RMGR_COMPILER_FRONTEND_VERSION_IS_AT_LEAST(major,minor,patch)   (!INTERNAL_RMGR_VERSION_IS_LESS_THAN(RMGR_COMPILER_FRONTEND_VERSION, (major), (minor), (patch)))
+#define RMGR_COMPILER_FRONTEND_VERSION_IS_AT_LEAST(major,minor,patch)   RMGR_VERSION_IS_GREATER_THAN(RMGR_COMPILER_FRONTEND_VERSION, major, minor, patch)
 
 /**
  * @brief Evaluates to non-zero if the compiler back-end's version is < the specified one
  */
-#define RMGR_COMPILER_BACKEND_VERSION_IS_LESS_THAN(major,minor,patch)   INTERNAL_RMGR_VERSION_IS_LESS_THAN(RMGR_COMPILER_BACKEND_VERSION, (major), (minor), (patch))
+#define RMGR_COMPILER_BACKEND_VERSION_IS_LESS_THAN(major,minor,patch)   RMGR_VERSION_IS_LESS_THAN(RMGR_COMPILER_BACKEND_VERSION, major, minor, patch)
 
 /**
  * @brief Evaluates to non-zero if the compiler back-end's version is >= the specified one
  */
-#define RMGR_COMPILER_BACKEND_VERSION_IS_AT_LEAST(major,minor,patch)    (!INTERNAL_RMGR_VERSION_IS_LESS_THAN(RMGR_COMPILER_BACKEND_VERSION, (major), (minor), (patch)))
+#define RMGR_COMPILER_BACKEND_VERSION_IS_AT_LEAST(major,minor,patch)    RMGR_VERSION_IS_GREATER_THAN(RMGR_COMPILER_BACKEND_VERSION, major, minor, patch)
 
 /**
  * @brief Convenience macros for testing both front-end and back-end
