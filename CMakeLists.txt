@@ -28,11 +28,13 @@ if (RMGR_DETECT_BUILD_TESTS)
         "include/rmgr/detect-runtime.h"
     )
     target_link_libraries(rmgr-detect-tests PRIVATE rmgr-detect)
+    set_property(DIRECTORY . PROPERTY VS_STARTUP_PROJECT "rmgr-detect-tests")
+
+    # Identify compiler
     if (MINGW)
         target_link_options(rmgr-detect-tests PRIVATE "-static")
         set(RMGR_DETECT_TESTS_EXPECTED_VARIANT "\"MinGW\"")
     endif()
-
     if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
         set(RMGR_DETECT_TESTS_EXPECTED_FRONTEND         "\"MSVC\"")
         set(RMGR_DETECT_TESTS_EXPECTED_FRONTEND_VERSION "\"${CMAKE_CXX_COMPILER_VERSION}\"")
@@ -77,16 +79,20 @@ if (RMGR_DETECT_BUILD_TESTS)
         message(FATAL_ERROR "Unsupported/unrecognized compiler")
     endif()
 
+    # Identify C runtime library
     if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
         set(RMGR_DETECT_TESTS_EXPECTED_CRT "\"glibc\"")
     elseif (CMAKE_SYSTEM_NAME STREQUAL "Windows")
         set(RMGR_DETECT_TESTS_EXPECTED_CRT "\"MSVCRT\"")
     elseif (CYGWIN)
         set(RMGR_DETECT_TESTS_EXPECTED_CRT "\"Newlib\"")
+    elseif (CMAKE_SYSTEM_NAME STREQUAL "Android")
+        set(RMGR_DETECT_TESTS_EXPECTED_CRT "\"Bionic\"")
     else()
         message(FATAL_ERROR "Unsupported/unrecognized platform")
     endif()
 
+    # Forward info to test program
     target_compile_definitions(rmgr-detect-tests PRIVATE
        "EXPECTED_FRONTEND=${RMGR_DETECT_TESTS_EXPECTED_FRONTEND}"
        "EXPECTED_FRONTEND_VERSION=${RMGR_DETECT_TESTS_EXPECTED_FRONTEND_VERSION}"
@@ -94,7 +100,6 @@ if (RMGR_DETECT_BUILD_TESTS)
        "EXPECTED_BACKEND_VERSION=${RMGR_DETECT_TESTS_EXPECTED_BACKEND_VERSION}"
        "EXPECTED_CRT=${RMGR_DETECT_TESTS_EXPECTED_CRT}"
     )
-
     if (DEFINED RMGR_DETECT_TESTS_EXPECTED_VARIANT)
         target_compile_definitions(rmgr-detect-tests PRIVATE "EXPECTED_VARIANT=${RMGR_DETECT_TESTS_EXPECTED_VARIANT}")
     endif()
@@ -107,6 +112,4 @@ if (RMGR_DETECT_BUILD_TESTS)
             "EXPECTED_VARIANT_VERSION_PATCH=${RMGR_DETECT_TESTS_EXPECTED_VARIANT_VERSION_PATCH}"
         )
     endif()
-
-    set_property(DIRECTORY . PROPERTY VS_STARTUP_PROJECT "rmgr-detect-tests")
 endif()

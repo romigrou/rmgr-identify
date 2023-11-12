@@ -60,6 +60,9 @@ bool rmgr_detect_runtime_tests()
 {
     bool success = true;
 
+#if RMGR_CRT_IS_BIONIC
+    static const char crtName[] = {"Bionic"};
+#endif
 #if RMGR_CRT_IS_GLIBC
     static const char crtName[] = {"glibc"};
 #endif

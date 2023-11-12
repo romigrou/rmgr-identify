@@ -55,23 +55,28 @@
 #ifndef RMGR_DETECT_RUNTIME_H
 #define RMGR_DETECT_RUNTIME_H
 
-/* The minimal header that seems to allow us to identify the C library seems to be string.h.
+/* The minimal header that allows us to identify the C library seems to be string.h.
    However, if we can include a more pinpointed header, let's do it. */
 #ifdef __has_include
     #if __has_include(<_newlib_version.h>)
         #include <_newlib_version.h>
     #elif __has_include(<features.h>)
         #include <features.h>
-    #elif defined(__cplusplus)
-        #include <cstring>
     #else
-        #include "string.h"
+        #define INTERNAL_RMGR_DETECT_RUNTIME_NO_PINPOINTED_HEADER
     #endif
 #else
-    #ifdef __cplusplus
-        #include <cstring>
-    #else
-        #include "string.h"
+    #define INTERNAL_RMGR_DETECT_RUNTIME_NO_PINPOINTED_HEADER
+#endif
+
+#ifdef INTERNAL_RMGR_DETECT_RUNTIME_NO_PINPOINTED_HEADER
+    #undef INTERNAL_RMGR_DETECT_RUNTIME_NO_PINPOINTED_HEADER
+    #ifndef _WIN32 /* No need to include anything on Windows */
+        #ifdef __cplusplus
+            #include <cstring>
+        #else
+            #include "string.h"
+        #endif
     #endif
 #endif
 
@@ -101,6 +106,19 @@
     #define RMGR_CRT_VERSION_MAJOR  (__NEWLIB__)
     #define RMGR_CRT_VERSION_MINOR  (__NEWLIB_MINOR__)
     #define RMGR_CRT_VERSION_PATCH  (__NEWLIB_PATCHLEVEL__)
+
+#elif defined(__BIONIC__)
+    /**
+     * @def   RMGR_CRT_IS_BIONIC
+     * @brief Whether the C library is Bionic
+     *
+     * @note As Bionic seems to have no version number the Android API level is used as the minor version number
+     *       (so as to maximize chances to maintain monotonicity if a genuine version number appears some day).
+     */
+    #define RMGR_CRT_IS_BIONIC      (1)
+    #define RMGR_CRT_VERSION_MAJOR  (0)
+    #define RMGR_CRT_VERSION_MINOR  (__ANDROID_API__)
+    #define RMGR_CRT_VERSION_PATCH  (0)
 
 #elif defined(_WIN32)
     #ifdef __MINGW32__
@@ -134,12 +152,15 @@
     #define RMGR_CRT_IS_UNKNOWN     (1)
 #endif
 
-#if RMGR_CRT_IS_UNKNOWN && defined(RMGR_DETECT_NO_FAILURE)
+#if RMGR_CRT_IS_UNKNOWN && !defined(RMGR_DETECT_NO_FAILURE)
     #error Unsupported/unrecognized C library
 #endif
 
 
 /* Set default values to undefined macros */
+#ifndef RMGR_CRT_IS_BIONIC
+    #define RMGR_CRT_IS_BIONIC      (0)
+#endif
 #ifndef RMGR_CRT_IS_GLIBC
     #define RMGR_CRT_IS_GLIBC       (0)
 #endif

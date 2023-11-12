@@ -83,8 +83,8 @@
 			"hidden":         true,
 			"cacheVariables":
 			{
-				"CMAKE_C_COMPILER":   {"type":"PATH", "value":"/opt/AMD/aocc-compiler-latest/bin//clang"},
-				"CMAKE_CXX_COMPILER": {"type":"PATH", "value":"/opt/AMD/aocc-compiler-latest/bin//clang++"}
+				"CMAKE_C_COMPILER":   {"type":"FILEPATH", "value":"/opt/AMD/aocc-compiler-latest/bin//clang"},
+				"CMAKE_CXX_COMPILER": {"type":"FILEPATH", "value":"/opt/AMD/aocc-compiler-latest/bin//clang++"}
 			}
 		},
 		{
@@ -92,8 +92,8 @@
 			"hidden":         true,
 			"cacheVariables":
 			{
-				"CMAKE_C_COMPILER":   {"type":"PATH", "value":"/opt/intel/oneapi/compiler/latest/linux/bin/intel64/icc"},
-				"CMAKE_CXX_COMPILER": {"type":"PATH", "value":"/opt/intel/oneapi/compiler/latest/linux/bin/intel64/icc"}
+				"CMAKE_C_COMPILER":   {"type":"FILEPATH", "value":"/opt/intel/oneapi/compiler/latest/linux/bin/intel64/icc"},
+				"CMAKE_CXX_COMPILER": {"type":"FILEPATH", "value":"/opt/intel/oneapi/compiler/latest/linux/bin/intel64/icc"}
 			}
 		},
 		{
@@ -101,9 +101,44 @@
 			"hidden":         true,
 			"cacheVariables":
 			{
-				"CMAKE_C_COMPILER":   {"type":"PATH", "value":"/opt/intel/oneapi/compiler/latest/linux/bin/icx"},
-				"CMAKE_CXX_COMPILER": {"type":"PATH", "value":"/opt/intel/oneapi/compiler/latest/linux/bin/icx"}
+				"CMAKE_C_COMPILER":   {"type":"FILEPATH", "value":"/opt/intel/oneapi/compiler/latest/linux/bin/icx"},
+				"CMAKE_CXX_COMPILER": {"type":"FILEPATH", "value":"/opt/intel/oneapi/compiler/latest/linux/bin/icx"}
 			}
+		},
+		{
+			"name":           "android",
+			"hidden":         true,
+			"generator":      "Unix Makefiles",
+			"binaryDir":      "${sourceDir}/build/${presetName}",
+			"cacheVariables":
+			{
+				"RMGR_DETECT_BUILD_TESTS":        true,
+				"CMAKE_TOOLCHAIN_FILE":           {"type":"FILEPATH", "value":"$env{ANDROID_NDK}/build/cmake/android.toolchain.cmake"},
+				"CMAKE_ARCHIVE_OUTPUT_DIRECTORY": {"type":"PATH",     "value":"${sourceDir}/lib/Windows-${presetName}"},
+				"CMAKE_LIBRARY_OUTPUT_DIRECTORY": {"type":"PATH",     "value":"${sourceDir}/bin/Windows-${presetName}"},
+				"CMAKE_RUNTIME_OUTPUT_DIRECTORY": {"type":"PATH",     "value":"${sourceDir}/bin/Windows-${presetName}"},
+				"CMAKE_INSTALL_PREFIX":           {"type":"PATH",     "value":"${sourceDir}/package}"},
+				"ANDROID_NDK":                    {"type":"PATH",     "value":"$env{ANDROID_NDK}"},
+				"ANDROID_PLATFORM":               {"type":"STRING",   "value":"android-21"},
+				"ANDROID_ABI":                    {"type":"STRING",   "value":"arm64-v8a"}
+			}
+		},
+		{
+			"name":           "android-gcc",
+			"hidden":         true,
+			"inherits":       ["android"],
+			"cacheVariables": {"ANDROID_TOOLCHAIN":{"type":"STRING", "value":"gcc"}}
+		},
+		{
+			"name":           "android-windows",
+			"hidden":         true,
+			"inherits":       ["windows-host", "android"],
+			"cacheVariables": {"CMAKE_MAKE_PROGRAM":{"type":"FILEPATH", "value":"$env{ANDROID_NDK}/prebuilt/windows-x86_64/bin/make.exe"}}
+		},
+		{
+			"name":           "android-gcc-windows",
+			"hidden":         true,
+			"inherits":       ["android-windows", "android-gcc"]
 		},
 		{
 			"name":           "debug",
@@ -133,6 +168,7 @@
 		{"name":"vs2022-icx-2023",   "displayName":"VS2022 ICX 2023", "inherits":["vs2022"], "toolset":"Intel C++ Compiler 2023"},
 
 		{"name":"nmake-clang-debug", "displayName":"NMake + Clang",   "inherits":["nmake", "clang", "debug"]},
+		{"name":"android-make-debug","displayName":"Android",         "inherits":["android-windows", "debug"]},
 
 		{"name":"ninja-aocc",        "inherits":["linux-host", "windows-target", "ninja", "aocc"]},
 		{"name":"ninja-clang",       "inherits":[              "native-target",  "ninja", "clang"]},
@@ -160,6 +196,8 @@
 		{"name":"ninja-gcc-debug",       "configurePreset":"ninja-gcc",         "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-detect-tests"]},
 		{"name":"ninja-icc-debug",       "configurePreset":"ninja-icc",         "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-detect-tests"]},
 		{"name":"ninja-icx-debug",       "configurePreset":"ninja-icx",         "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-detect-tests"]},
-		{"name":"ninja-mingw-gcc-debug", "configurePreset":"ninja-mingw-gcc",   "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-detect-tests"]}
+		{"name":"ninja-mingw-gcc-debug", "configurePreset":"ninja-mingw-gcc",   "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-detect-tests"]},
+
+		{"name":"android-make-debug",    "configurePreset":"android-make-debug","displayName":"Debug",                          "targets":["rmgr-detect-tests"]}
 	]
 }
