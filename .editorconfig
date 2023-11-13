@@ -17,3 +17,6 @@ indent_style = tab
 
 [*.in]
 trim_trailing_whitespace = false
+
+[android-make.cmd]
+end_of_line = lf
