@@ -51,7 +51,7 @@
  * For more information, please refer to <https://unlicense.org/>
  */
 
-#include <rmgr/detect-compiler.h>
+#include <rmgr/identify-compiler.h>
 #include <cstdio>
 #include <cstring>
 
@@ -70,7 +70,7 @@ bool check_version_numbers(const char* v1, const char* v2);
 #endif
 
 
-bool rmgr_detect_compiler_tests()
+bool rmgr_identify_compiler_tests()
 {
     bool success = true;
 
@@ -125,6 +125,7 @@ bool rmgr_detect_compiler_tests()
     snprintf(variantVersion, sizeof(variantVersion), "%u.%u.%u", RMGR_COMPILER_VARIANT_VERSION_MAJOR, RMGR_COMPILER_VARIANT_VERSION_MINOR, RMGR_COMPILER_VARIANT_VERSION_PATCH);
 #else
     static const char variantVersion[] = {""};
+    (void)variantVersion;
 #endif
 
     printf("Detected front-end: %s %s\n",   frontEndName, frontEndVersion);

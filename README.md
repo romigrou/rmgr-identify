@@ -1,7 +1,7 @@
-﻿rmgr::detect
-============
+﻿rmgr::identify
+==============
 
-A small collection of header files intended to **reliably** detect the compiler and the C library.
+A small collection of header files intended to **reliably** identify the compiler and the C library.
 
 I have seen many projects, including very popular and high-quality ones, fail to compile when using
 some uncommon tool chain because of incorrect conditional compilation clauses. Typically, using
@@ -9,8 +9,8 @@ Clang under Windows is an almost-assured failure.
 
 This project is an attempt at preventing such failures by using finer-grained tool chain detection
 
-Detecting The Compiler
-----------------------
+Identifying The Compiler
+------------------------
 
 Of course, resources such as [cpredef](https://github.com/cpredef/predef) are invaluable as
 references but they fall short of being immediately useful because reality is a bit trickier. Some

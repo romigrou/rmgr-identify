@@ -51,12 +51,12 @@
  * For more information, please refer to <https://unlicense.org/>
  */
 
-#include <rmgr/detect-runtime.h>
+#include <rmgr/identify-runtime.h>
 #include <cstdio>
 #include <cstring>
 
 
-bool rmgr_detect_runtime_tests()
+bool rmgr_identify_runtime_tests()
 {
     bool success = true;
 

@@ -52,8 +52,8 @@
  */
 
 
-#ifndef RMGR_DETECT_RUNTIME_H
-#define RMGR_DETECT_RUNTIME_H
+#ifndef RMGR_ID_RUNTIME_H
+#define RMGR_ID_RUNTIME_H
 
 /* The minimal header that allows us to identify the C library seems to be string.h.
    However, if we can include a more pinpointed header, let's do it. */
@@ -63,14 +63,14 @@
     #elif __has_include(<features.h>)
         #include <features.h>
     #else
-        #define INTERNAL_RMGR_DETECT_RUNTIME_NO_PINPOINTED_HEADER
+        #define INTERNAL_RMGR_ID_RUNTIME_NO_PINPOINTED_HEADER
     #endif
 #else
-    #define INTERNAL_RMGR_DETECT_RUNTIME_NO_PINPOINTED_HEADER
+    #define INTERNAL_RMGR_ID_RUNTIME_NO_PINPOINTED_HEADER
 #endif
 
-#ifdef INTERNAL_RMGR_DETECT_RUNTIME_NO_PINPOINTED_HEADER
-    #undef INTERNAL_RMGR_DETECT_RUNTIME_NO_PINPOINTED_HEADER
+#ifdef INTERNAL_RMGR_ID_RUNTIME_NO_PINPOINTED_HEADER
+    #undef INTERNAL_RMGR_ID_RUNTIME_NO_PINPOINTED_HEADER
     #ifndef _WIN32 /* No need to include anything on Windows */
         #ifdef __cplusplus
             #include <cstring>
@@ -81,7 +81,7 @@
 #endif
 
 /* ========================================================================= */
-/* Detect the C library                                                      */
+/* Identify the C library                                                    */
 
 #if defined(__GNU_LIBRARY__)
     /**
@@ -152,7 +152,7 @@
     #define RMGR_CRT_IS_UNKNOWN     (1)
 #endif
 
-#if RMGR_CRT_IS_UNKNOWN && !defined(RMGR_DETECT_NO_FAILURE)
+#if RMGR_CRT_IS_UNKNOWN && !defined(RMGR_ID_NO_FAILURE)
     #error Unsupported/unrecognized C library
 #endif
 
@@ -178,4 +178,4 @@
 #endif
 
 
-#endif /* RMGR_DETECT_RUNTIME_H */
+#endif /* RMGR_ID_RUNTIME_H */

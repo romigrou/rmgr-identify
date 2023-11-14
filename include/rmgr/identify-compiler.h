@@ -51,8 +51,8 @@
  * For more information, please refer to <https://unlicense.org/>
  */
 
-#ifndef RMGR_DETECT_COMPILER_H
-#define RMGR_DETECT_COMPILER_H
+#ifndef RMGR_ID_COMPILER_H
+#define RMGR_ID_COMPILER_H
 
 
 /** @cond 7bad46e9372d9f26b69b05cab5a770c4 */
@@ -61,7 +61,7 @@
 
 
 /* ========================================================================= */
-/* Detect compiler front-end                                                 */
+/* Identify compiler front-end                                               */
 
 #ifndef INTERNAL_RMGR_COMPILER_IS_NOT_DOXYGEN
     /**
@@ -139,7 +139,7 @@
     #define RMGR_COMPILER_FRONTEND_VERSION_PATCH  (__GNUC_PATCHLEVEL__)
 #endif
 
-#elif defined(RMGR_DETECT_NO_FAILURE)
+#elif defined(RMGR_ID_NO_FAILURE)
     #define RMGR_COMPILER_FRONTEND_IS_UNKNOWN     (1)
 #else
     #error Unsupported/unrecognized compiler front-end
@@ -171,7 +171,7 @@
 
 
 /* ========================================================================= */
-/* Detect compiler back-end                                                  */
+/* Identify compiler back-end                                                */
 
 #if    defined(__llvm__) \
     || (defined(__INTELLISENSE__) && defined(__clang__) && _MSC_VER >= 1920) /* Workaround for Intellisense not definining __llvm__ */
@@ -231,7 +231,7 @@
     #define RMGR_COMPILER_BACKEND_VERSION_PATCH   (__GNUC_PATCHLEVEL__)
 #endif
 
-#elif defined(RMGR_DETECT_NO_FAILURE)
+#elif defined(RMGR_ID_NO_FAILURE)
     #define RMGR_COMPILER_BACKEND_IS_UNKNOWN      (1)
 #else
     #error Unsupported/unrecognized compiler back-end
@@ -260,7 +260,7 @@
 
 
 /* ========================================================================= */
-/* Detect compiler variant                                                   */
+/* Identify compiler variant                                                 */
 
 #ifdef __MINGW32__
     #define RMGR_COMPILER_VARIANT_IS_MINGW  (1)
@@ -371,4 +371,4 @@
 #define RMGR_COMPILER_IS_MSVC_AT_LEAST(major,minor,patch)        (RMGR_COMPILER_FRONTEND_VERSION_IS_AT_LEAST((major),(minor),(patch)) && RMGR_COMPILER_IS_MSVC)
 
 
-#endif /* RMGR_DETECT_COMPILER_H */
+#endif /* RMGR_ID_COMPILER_H */

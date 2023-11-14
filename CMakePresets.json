@@ -29,7 +29,7 @@
 			"binaryDir": "${sourceDir}/build/${hostSystemName}-${presetName}",
 			"cacheVariables":
 			{
-				"RMGR_DETECT_BUILD_TESTS":        true,
+				"RMGR_ID_BUILD_TESTS":            true,
 				"CMAKE_ARCHIVE_OUTPUT_DIRECTORY": {"type":"PATH", "value":"${sourceDir}/lib/${hostSystemName}-${presetName}"},
 				"CMAKE_LIBRARY_OUTPUT_DIRECTORY": {"type":"PATH", "value":"${sourceDir}/bin/${hostSystemName}-${presetName}"},
 				"CMAKE_RUNTIME_OUTPUT_DIRECTORY": {"type":"PATH", "value":"${sourceDir}/bin/${hostSystemName}-${presetName}"},
@@ -42,7 +42,7 @@
 			"binaryDir": "${sourceDir}/build/Windows-${presetName}",
 			"cacheVariables":
 			{
-				"RMGR_DETECT_BUILD_TESTS":        true,
+				"RMGR_ID_BUILD_TESTS":            true,
 				"CMAKE_ARCHIVE_OUTPUT_DIRECTORY": {"type":"PATH", "value":"${sourceDir}/lib/Windows-${presetName}"},
 				"CMAKE_LIBRARY_OUTPUT_DIRECTORY": {"type":"PATH", "value":"${sourceDir}/bin/Windows-${presetName}"},
 				"CMAKE_RUNTIME_OUTPUT_DIRECTORY": {"type":"PATH", "value":"${sourceDir}/bin/Windows-${presetName}"},
@@ -112,7 +112,7 @@
 			"binaryDir":      "${sourceDir}/build/${presetName}",
 			"cacheVariables":
 			{
-				"RMGR_DETECT_BUILD_TESTS":        true,
+				"RMGR_ID_BUILD_TESTS":            true,
 				"CMAKE_TOOLCHAIN_FILE":           {"type":"FILEPATH", "value":"$env{ANDROID_NDK}/build/cmake/android.toolchain.cmake"},
 				"CMAKE_MAKE_PROGRAM":             {"type":"FILEPATH", "value":"${sourceDir}/tests/android-make.cmd"},
 				"CMAKE_ARCHIVE_OUTPUT_DIRECTORY": {"type":"PATH",     "value":"${sourceDir}/lib/Windows-${presetName}"},
@@ -171,24 +171,24 @@
 	],
 	"buildPresets":
 	[
-		{"name":"vs2015-msvc-debug",     "configurePreset":"vs2015-msvc",       "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-detect-tests"]},
-		{"name":"vs2015-clang_c2-debug", "configurePreset":"vs2015-clang_c2",   "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-detect-tests"]},
-		{"name":"vs2017-msvc-debug",     "configurePreset":"vs2017-msvc",       "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-detect-tests"]},
-		{"name":"vs2017-clang_c2-debug", "configurePreset":"vs2017-clang_c2",   "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-detect-tests"]},
-		{"name":"vs2019-msvc-debug",     "configurePreset":"vs2019-msvc",       "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-detect-tests"]},
-		{"name":"vs2019-clangcl-debug",  "configurePreset":"vs2019-clangcl",    "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-detect-tests"]},
-		{"name":"vs2022-msvc-debug",     "configurePreset":"vs2022-msvc",       "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-detect-tests"]},
-		{"name":"vs2022-clangcl-debug",  "configurePreset":"vs2022-clangcl",    "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-detect-tests"]},
+		{"name":"vs2015-msvc-debug",     "configurePreset":"vs2015-msvc",       "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-identify-tests"]},
+		{"name":"vs2015-clang_c2-debug", "configurePreset":"vs2015-clang_c2",   "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-identify-tests"]},
+		{"name":"vs2017-msvc-debug",     "configurePreset":"vs2017-msvc",       "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-identify-tests"]},
+		{"name":"vs2017-clang_c2-debug", "configurePreset":"vs2017-clang_c2",   "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-identify-tests"]},
+		{"name":"vs2019-msvc-debug",     "configurePreset":"vs2019-msvc",       "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-identify-tests"]},
+		{"name":"vs2019-clangcl-debug",  "configurePreset":"vs2019-clangcl",    "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-identify-tests"]},
+		{"name":"vs2022-msvc-debug",     "configurePreset":"vs2022-msvc",       "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-identify-tests"]},
+		{"name":"vs2022-clangcl-debug",  "configurePreset":"vs2022-clangcl",    "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-identify-tests"]},
 
-		{"name":"nmake-clang-debug",     "configurePreset":"nmake-clang-debug", "displayName":"Debug",                          "targets":["rmgr-detect-tests"]},
+		{"name":"nmake-clang-debug",     "configurePreset":"nmake-clang-debug", "displayName":"Debug",                          "targets":["rmgr-identify-tests"]},
 
-		{"name":"ninja-aocc-debug",      "configurePreset":"ninja-aocc",        "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-detect-tests"]},
-		{"name":"ninja-clang-debug",     "configurePreset":"ninja-clang",       "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-detect-tests"]},
-		{"name":"ninja-gcc-debug",       "configurePreset":"ninja-gcc",         "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-detect-tests"]},
-		{"name":"ninja-icc-debug",       "configurePreset":"ninja-icc",         "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-detect-tests"]},
-		{"name":"ninja-icx-debug",       "configurePreset":"ninja-icx",         "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-detect-tests"]},
-		{"name":"ninja-mingw-gcc-debug", "configurePreset":"ninja-mingw-gcc",   "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-detect-tests"]},
+		{"name":"ninja-aocc-debug",      "configurePreset":"ninja-aocc",        "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-identify-tests"]},
+		{"name":"ninja-clang-debug",     "configurePreset":"ninja-clang",       "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-identify-tests"]},
+		{"name":"ninja-gcc-debug",       "configurePreset":"ninja-gcc",         "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-identify-tests"]},
+		{"name":"ninja-icc-debug",       "configurePreset":"ninja-icc",         "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-identify-tests"]},
+		{"name":"ninja-icx-debug",       "configurePreset":"ninja-icx",         "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-identify-tests"]},
+		{"name":"ninja-mingw-gcc-debug", "configurePreset":"ninja-mingw-gcc",   "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-identify-tests"]},
 
-		{"name":"android-make-debug",    "configurePreset":"android-make-debug","displayName":"Debug",                          "targets":["rmgr-detect-tests"]}
+		{"name":"android-make-debug",    "configurePreset":"android-make-debug","displayName":"Debug",                          "targets":["rmgr-identify-tests"]}
 	]
 }

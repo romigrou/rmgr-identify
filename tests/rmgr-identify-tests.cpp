@@ -3,15 +3,15 @@
 #include <cstdlib>
 
 
-bool rmgr_detect_compiler_tests();
-bool rmgr_detect_runtime_tests();
+bool rmgr_identify_compiler_tests();
+bool rmgr_identify_runtime_tests();
 
 
 int main()
 {
     bool success = true;
-    success = rmgr_detect_compiler_tests() && success;
-    success = rmgr_detect_runtime_tests()  && success;
+    success = rmgr_identify_compiler_tests() && success;
+    success = rmgr_identify_runtime_tests()  && success;
 
     if (success)
     {
