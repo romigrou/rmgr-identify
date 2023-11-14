@@ -136,7 +136,7 @@
     #elif defined(__has_include) && !__has_include(<vcruntime.h>)
         /* This check is just for extra safety but, AFAIK, MSVCRT is the only C library used on Windows */
         #define RMGR_CRT_IS_UNKNOWN  (1)
-        #error qscsvsv
+        #error Expected C runtime library was MSVCRT but appears not to be the case
     #else
         #include <crtversion.h>
         /**
