@@ -24,6 +24,9 @@ int main()
 
 bool check_version_numbers(const char* v1, const char* v2)
 {
+    if (!*v1 || !*v2)
+        return false;
+
     while (*v1 && *v1==*v2)
     {
         ++v1;
