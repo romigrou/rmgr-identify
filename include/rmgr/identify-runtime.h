@@ -225,8 +225,17 @@
      * @brief Whether the C++ library is LLVM's libc++
      */
     #define RMGR_CPPRT_IS_LIBCPP      (1)
-    #define RMGR_CPPRT_VERSION_MAJOR  (_LIBCPP_VERSION / 1000)
-    #define RMGR_CPPRT_VERSION_MINOR  (_LIBCPP_VERSION % 1000)
+    // Numbering scheme changed in version 16
+    // See https://github.com/llvm/llvm-project/commit/b6ff5b470d5e4acfde59d57f18e575c0284941f4
+    #if _LIBCPP_VERSION >= 160000
+        #define RMGR_CPPRT_VERSION_MAJOR  (_LIBCPP_VERSION / 10000)
+        #define RMGR_CPPRT_VERSION_MINOR  ((_LIBCPP_VERSION / 100) % 100)
+        #define RMGR_CPPRT_VERSION_PATCH  (_LIBCPP_VERSION % 100)
+    #else
+        #define RMGR_CPPRT_VERSION_MAJOR  (_LIBCPP_VERSION / 1000)
+        #define RMGR_CPPRT_VERSION_MINOR  ((_LIBCPP_VERSION / 100) % 10)
+        #define RMGR_CPPRT_VERSION_PATCH  (_LIBCPP_VERSION % 100)
+    #endif
 
 #elif defined(_STLPORT_VERSION)
     /**
