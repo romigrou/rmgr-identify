@@ -238,6 +238,16 @@
     #define RMGR_CPPRT_VERSION_MINOR  (_STLPORT_MINOR)
     #define RMGR_CPPRT_VERSION_PATCH  (_STLPORT_PATCHLEVEL)
 
+#elif defined(_RWSTD_VER)
+    /**
+     * @def   RMGR_CPPRT_IS_RWSTD
+     * @brief Whether the C++ library is Rogue Wave's
+     */
+    #define RMGR_CPPRT_IS_RWSTD       (1)
+    #define RMGR_CPPRT_VERSION_MAJOR  (_RWSTD_VER >> 24)
+    #define RMGR_CPPRT_VERSION_MINOR  ((_RWSTD_VER >> 16) & 0xFF)
+    #define RMGR_CPPRT_VERSION_PATCH  ((_RWSTD_VER >>_ 8) & 0xFF)
+
 #elif RMGR_CRT_IS_MSVCRT
     /**
      * @def   RMGR_CPPRT_IS_MSVCRT
@@ -264,6 +274,9 @@
 #endif
 #ifndef RMGR_CPPRT_IS_MSVCRT
     #define RMGR_CPPRT_IS_MSVCRT      (0)
+#endif
+#ifndef RMGR_CPPRT_IS_RWSTD
+    #define RMGR_CPPRT_IS_RWSTD       (0)
 #endif
 #ifndef RMGR_CPPRT_IS_STLPORT
     #define RMGR_CPPRT_IS_STLPORT     (0)
