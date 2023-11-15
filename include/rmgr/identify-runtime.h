@@ -63,14 +63,14 @@
     #elif __has_include(<features.h>)
         #include <features.h>
     #else
-        #define INTERNAL_RMGR_ID_RUNTIME_NO_PINPOINTED_HEADER
+        #define INTERNAL_RMGR_CRT_NO_PINPOINTED_HEADER
     #endif
 #else
-    #define INTERNAL_RMGR_ID_RUNTIME_NO_PINPOINTED_HEADER
+    #define INTERNAL_RMGR_CRT_NO_PINPOINTED_HEADER
 #endif
 
-#ifdef INTERNAL_RMGR_ID_RUNTIME_NO_PINPOINTED_HEADER
-    #undef INTERNAL_RMGR_ID_RUNTIME_NO_PINPOINTED_HEADER
+#ifdef INTERNAL_RMGR_CRT_NO_PINPOINTED_HEADER
+    #undef INTERNAL_RMGR_CRT_NO_PINPOINTED_HEADER
     #ifndef _WIN32 /* No need to include anything on Windows */
         #ifdef __cplusplus
             #include <cstring>
@@ -176,6 +176,106 @@
 #ifndef RMGR_CRT_VERSION_PATCH
     #define RMGR_CRT_VERSION_PATCH  (0)
 #endif
+
+
+/* ========================================================================= */
+/* Identify the C++ library                                                  */
+
+#ifdef __cplusplus
+
+#ifdef __has_include
+    #if __has_include(<version>)
+        #include <version>
+    #elif __has_include(<bits/c++config.h>)
+        #include <bits/c++config.h>
+    #elif __has_include(<__config>)
+        #include <__config>
+    #elif __has_include(<_stlport_version.h>)
+        #include <_stlport_version.h>
+    #else
+        #define INTERNAL_RMGR_CRT_NO_PINPOINTED_HEADER
+    #endif
+#else
+    #define INTERNAL_RMGR_CRT_NO_PINPOINTED_HEADER
+#endif
+#ifdef INTERNAL_RMGR_CRT_NO_PINPOINTED_HEADER
+    #undef INTERNAL_RMGR_CRT_NO_PINPOINTED_HEADER
+    #include <cstring>
+#endif
+
+#if defined(__GLIBCXX__) || defined(__GLIBCPP__)
+    /**
+     * @def   RMGR_CPPRT_IS_LIBSTDCPP
+     * @brief Whether the C++ library is GNU's libstdc++
+     */
+    #define RMGR_CPPRT_IS_LIBSTDCPP   (1)
+    #ifdef __GLIBCXX__
+        #define RMGR_CPPRT_VERSION_MAJOR  (__GLIBCXX__ / 10000)
+        #define RMGR_CPPRT_VERSION_MINOR  ((__GLIBCXX__ / 100) % 100)
+        #define RMGR_CPPRT_VERSION_PATCH  (__GLIBCXX__ % 100)
+    #else
+        #define RMGR_CPPRT_VERSION_MAJOR  (__GLIBCPP__ / 10000)
+        #define RMGR_CPPRT_VERSION_MINOR  ((__GLIBCPP__ / 100) % 100)
+        #define RMGR_CPPRT_VERSION_PATCH  (__GLIBCPP__ % 100)
+    #endif
+
+#elif defined(_LIBCPP_VERSION)
+    /**
+     * @def   RMGR_CPPRT_IS_LIBCPP
+     * @brief Whether the C++ library is LLVM's libc++
+     */
+    #define RMGR_CPPRT_IS_LIBCPP      (1)
+    #define RMGR_CPPRT_VERSION_MAJOR  (_LIBCPP_VERSION / 1000)
+    #define RMGR_CPPRT_VERSION_MINOR  (_LIBCPP_VERSION % 1000)
+
+#elif defined(_STLPORT_VERSION)
+    /**
+     * @def   RMGR_CPPRT_IS_STLPORT
+     * @brief Whether the C++ library is STLport
+     */
+    #define RMGR_CPPRT_IS_STLPORT     (1)
+    #define RMGR_CPPRT_VERSION_MAJOR  (_STLPORT_MAJOR)
+    #define RMGR_CPPRT_VERSION_MINOR  (_STLPORT_MINOR)
+    #define RMGR_CPPRT_VERSION_PATCH  (_STLPORT_PATCHLEVEL)
+
+#elif RMGR_CRT_IS_MSVCRT
+    /**
+     * @def   RMGR_CPPRT_IS_MSVCRT
+     * @brief Whether the C++ library is MSVCRT
+     */
+    #define RMGR_CPPRT_IS_MSVCRT      (1)
+    #define RMGR_CPPRT_VERSION_MAJOR  RMGR_CRT_VERSION_MAJOR
+    #define RMGR_CPPRT_VERSION_MINOR  RMGR_CRT_VERSION_MINOR
+    #define RMGR_CPPRT_VERSION_PATCH  RMGR_CRT_VERSION_PATCH
+
+#elif defined(RMGR_ID_NO_FAILURE)
+    #define RMGR_CPPRT_IS_UNKNOWN     (1)
+#else
+    #error Unsupported/unrecognized C++ library
+#endif
+
+
+/* Set default values to undefined macros */
+#ifndef RMGR_CPPRT_IS_LIBCPP
+    #define RMGR_CPPRT_IS_LIBCPP      (0)
+#endif
+#ifndef RMGR_CPPRT_IS_LIBSTDCPP
+    #define RMGR_CPPRT_IS_LIBSTDCPP   (0)
+#endif
+#ifndef RMGR_CPPRT_IS_MSVCRT
+    #define RMGR_CPPRT_IS_MSVCRT      (0)
+#endif
+#ifndef RMGR_CPPRT_IS_STLPORT
+    #define RMGR_CPPRT_IS_STLPORT     (0)
+#endif
+#ifndef RMGR_CPPRT_IS_UNKNOWN
+    #define RMGR_CPPRT_IS_UNKNOWN     (0)
+#endif
+#ifndef RMGR_CPPRT_VERSION_PATCH
+    #define RMGR_CPPRT_VERSION_PATCH  (0)
+#endif
+
+#endif /* __cplusplus */
 
 
 #endif /* RMGR_ID_RUNTIME_H */

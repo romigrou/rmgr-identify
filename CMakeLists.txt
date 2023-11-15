@@ -89,7 +89,30 @@ if (RMGR_ID_BUILD_TESTS)
     elseif (CMAKE_SYSTEM_NAME STREQUAL "Android")
         set(RMGR_ID_TESTS_EXPECTED_CRT "\"Bionic\"")
     else()
-        message(FATAL_ERROR "Unsupported/unrecognized platform")
+        message(FATAL_ERROR "Unsupported/unrecognized C library")
+    endif()
+
+    # Identify C++ runtime library
+    if (CMAKE_CXX_FLAGS MATCHES "stdlib=libc\\+\\+")
+        set(RMGR_ID_TESTS_EXPECTED_CPPRT "\"libc++\"")
+    elseif (CMAKE_SYSTEM_NAME STREQUAL "Android")
+        if (ANDROID_STL MATCHES "^c\\+\\+")
+            set(RMGR_ID_TESTS_EXPECTED_CPPRT "\"libc++\"")
+        elseif (ANDROID_STL MATCHES "^gnustl")
+            set(RMGR_ID_TESTS_EXPECTED_CPPRT "\"libstdc++\"")
+        elseif (ANDROID_STL MATCHES "^stlport")
+            set(RMGR_ID_TESTS_EXPECTED_CPPRT "\"STLport\"")
+        elseif (ANDROID_STL STREQUAL "system" OR ANDROID_STL STREQUAL "none")
+            set(RMGR_ID_TESTS_EXPECTED_CPPRT "\"\"")
+        else()
+            message(FATAL_ERROR "Cannot determine Android's STL")
+        endif()
+    elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CYGWIN OR MINGW)
+        set(RMGR_ID_TESTS_EXPECTED_CPPRT "\"libstdc++\"")
+    elseif (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+        set(RMGR_ID_TESTS_EXPECTED_CPPRT "\"MSVCRT\"")
+    else()
+        message(FATAL_ERROR "Unsupported/unrecognized C++ library")
     endif()
 
     # Forward info to test program
@@ -99,6 +122,7 @@ if (RMGR_ID_BUILD_TESTS)
        "EXPECTED_BACKEND=${RMGR_ID_TESTS_EXPECTED_BACKEND}"
        "EXPECTED_BACKEND_VERSION=${RMGR_ID_TESTS_EXPECTED_BACKEND_VERSION}"
        "EXPECTED_CRT=${RMGR_ID_TESTS_EXPECTED_CRT}"
+       "EXPECTED_CPPRT=${RMGR_ID_TESTS_EXPECTED_CPPRT}"
     )
     if (DEFINED RMGR_ID_TESTS_EXPECTED_VARIANT)
         target_compile_definitions(rmgr-identify-tests PRIVATE "EXPECTED_VARIANT=${RMGR_ID_TESTS_EXPECTED_VARIANT}")

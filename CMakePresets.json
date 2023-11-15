@@ -79,6 +79,11 @@
 			"environment":    {"CC":"clang", "CXX":"clang++"}
 		},
 		{
+			"name":           "clang-libc++",
+			"hidden":         true,
+			"environment":    {"CC":"clang", "CXX":"clang++", "CXXFLAGS":"-stdlib=libc++"}
+		},
+		{
 			"name":           "aocc",
 			"hidden":         true,
 			"cacheVariables":
@@ -131,6 +136,18 @@
 			"cacheVariables": {"ANDROID_TOOLCHAIN":{"type":"STRING", "value":"gcc"}}
 		},
 		{
+			"name":           "android-gcc-gnustl",
+			"hidden":         true,
+			"inherits":       ["android-gcc"],
+			"cacheVariables": {"ANDROID_STL":{"type":"STRING", "value":"gnustl_static"}}
+		},
+		{
+			"name":           "android-gcc-stlport",
+			"hidden":         true,
+			"inherits":       ["android-gcc"],
+			"cacheVariables": {"ANDROID_STL":{"type":"STRING", "value":"stlport_static"}}
+		},
+		{
 			"name":           "debug",
 			"hidden":         true,
 			"cacheVariables": {"CMAKE_BUILD_TYPE":{"type":"STRING", "value":"Debug"}}
@@ -161,6 +178,7 @@
 
 		{"name":"ninja-aocc",        "inherits":["linux-host", "windows-target", "ninja", "aocc"]},
 		{"name":"ninja-clang",       "inherits":[              "native-target",  "ninja", "clang"]},
+		{"name":"ninja-clang-libc++","inherits":[              "native-target",  "ninja", "clang-libc++"]},
 		{"name":"ninja-gcc",         "inherits":[              "native-target",  "ninja", "gcc"]},
 		{"name":"ninja-icc",         "inherits":["linux-host", "native-target",  "ninja", "icc"]},
 		{"name":"ninja-icx",         "inherits":["linux-host", "native-target",  "ninja", "icx"]},
@@ -182,12 +200,13 @@
 
 		{"name":"nmake-clang-debug",     "configurePreset":"nmake-clang-debug", "displayName":"Debug",                          "targets":["rmgr-identify-tests"]},
 
-		{"name":"ninja-aocc-debug",      "configurePreset":"ninja-aocc",        "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-identify-tests"]},
-		{"name":"ninja-clang-debug",     "configurePreset":"ninja-clang",       "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-identify-tests"]},
-		{"name":"ninja-gcc-debug",       "configurePreset":"ninja-gcc",         "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-identify-tests"]},
-		{"name":"ninja-icc-debug",       "configurePreset":"ninja-icc",         "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-identify-tests"]},
-		{"name":"ninja-icx-debug",       "configurePreset":"ninja-icx",         "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-identify-tests"]},
-		{"name":"ninja-mingw-gcc-debug", "configurePreset":"ninja-mingw-gcc",   "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-identify-tests"]},
+		{"name":"ninja-aocc-debug",         "configurePreset":"ninja-aocc",         "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-identify-tests"]},
+		{"name":"ninja-clang-debug",        "configurePreset":"ninja-clang",        "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-identify-tests"]},
+		{"name":"ninja-clang-libc++-debug", "configurePreset":"ninja-clang-libc++", "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-identify-tests"]},
+		{"name":"ninja-gcc-debug",          "configurePreset":"ninja-gcc",          "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-identify-tests"]},
+		{"name":"ninja-icc-debug",          "configurePreset":"ninja-icc",          "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-identify-tests"]},
+		{"name":"ninja-icx-debug",          "configurePreset":"ninja-icx",          "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-identify-tests"]},
+		{"name":"ninja-mingw-gcc-debug",    "configurePreset":"ninja-mingw-gcc",    "displayName":"Debug", "configuration":"Debug", "targets":["rmgr-identify-tests"]},
 
 		{"name":"android-make-debug",    "configurePreset":"android-make-debug","displayName":"Debug",                          "targets":["rmgr-identify-tests"]}
 	]
