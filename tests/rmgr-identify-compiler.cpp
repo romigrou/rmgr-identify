@@ -51,63 +51,91 @@
  * For more information, please refer to <https://unlicense.org/>
  */
 
-#include <rmgr/identify-runtime.h>
-#include <cstdio>
-#include <cstring>
+#include <rmgr/identify-compiler.h>
 
 
-bool rmgr_identify_runtime_tests()
+#ifndef EXPECTED_VARIANT_VERSION
+    #ifdef EXPECTED_VARIANT_VERSION_MAJOR
+        #define STRINGIFY(a)              DO_STRINGIFY(a)
+        #define DO_STRINGIFY(a)           #a
+        #define EXPECTED_VARIANT_VERSION  STRINGIFY(EXPECTED_VARIANT_VERSION_MAJOR) "." STRINGIFY(EXPECTED_VARIANT_VERSION_MINOR) "." STRINGIFY(EXPECTED_VARIANT_VERSION_PATCH)
+    #else
+        #define EXPECTED_VARIANT_VERSION  ""
+    #endif
+#endif
+
+
+void rmgr_identify_compiler_frontend(const char*& name, unsigned& major, unsigned& minor, unsigned& patch)
 {
-    bool success = true;
-
-#if RMGR_CRT_IS_BIONIC
-    static const char crtName[] = {"Bionic"};
+#if RMGR_COMPILER_FRONTEND_IS_BORLAND
+    static const char frontEndName[] = {"Borland"};
 #endif
-#if RMGR_CRT_IS_GLIBC
-    static const char crtName[] = {"glibc"};
+#if RMGR_COMPILER_FRONTEND_IS_CLANG
+    static const char frontEndName[] = {"Clang"};
 #endif
-#if RMGR_CRT_IS_MSVCRT
-    static const char crtName[] = {"MSVCRT"};
+#if RMGR_COMPILER_FRONTEND_IS_EDG
+    static const char frontEndName[] = {"EDG"};
 #endif
-#if RMGR_CRT_IS_NEWLIB
-    static const char crtName[] = {"Newlib"};
+#if RMGR_COMPILER_FRONTEND_IS_GCC
+    static const char frontEndName[] = {"GCC"};
 #endif
-
-#if RMGR_CPPRT_IS_LIBCPP
-    static const char cpprtName[] = {"libc++"};
-#endif
-#if RMGR_CPPRT_IS_LIBSTDCPP
-    static const char cpprtName[] = {"libstdc++"};
-#endif
-#if RMGR_CPPRT_IS_MSVCRT
-    static const char cpprtName[] = {"MSVCRT"};
-#endif
-#if RMGR_CPPRT_IS_STLPORT
-    static const char cpprtName[] = {"STLport"};
+#if RMGR_COMPILER_FRONTEND_IS_MSVC
+    static const char frontEndName[] = {"MSVC"};
 #endif
 
-    char crtVersion[64];
-    snprintf(crtVersion, sizeof(crtVersion), "%u.%u.%u", RMGR_CRT_VERSION_MAJOR, RMGR_CRT_VERSION_MINOR, RMGR_CRT_VERSION_PATCH);
+    name  = frontEndName;
+    major = RMGR_COMPILER_FRONTEND_VERSION_MAJOR;
+    minor = RMGR_COMPILER_FRONTEND_VERSION_MINOR;
+    patch = RMGR_COMPILER_FRONTEND_VERSION_PATCH;
+}
 
-    printf("Detected C runtime:   %s %s\n", crtName, crtVersion);
-    printf("Expected C runtime:   %s\n\n", EXPECTED_CRT);
 
-    char cpprtVersion[64];
-    snprintf(cpprtVersion, sizeof(cpprtVersion), "%u.%u.%u", RMGR_CPPRT_VERSION_MAJOR, RMGR_CPPRT_VERSION_MINOR, RMGR_CPPRT_VERSION_PATCH);
+void rmgr_identify_compiler_backend(const char*& name, unsigned& major, unsigned& minor, unsigned& patch)
+{
+#if RMGR_COMPILER_BACKEND_IS_BORLAND
+    static const char backEndName[] = {"Borland"};
+#endif
+#if RMGR_COMPILER_BACKEND_IS_GCC
+    static const char backEndName[] = {"GCC"};
+#endif
+#if RMGR_COMPILER_BACKEND_IS_ICC
+    static const char backEndName[] = {"ICC"};
+#endif
+#if RMGR_COMPILER_BACKEND_IS_LLVM
+    static const char backEndName[] = {"LLVM"};
+#endif
+#if RMGR_COMPILER_BACKEND_IS_MSVC
+    static const char backEndName[] = {"MSVC"};
+#endif
 
-    printf("Detected C++ runtime: %s %s\n", cpprtName, cpprtVersion);
-    printf("Expected C++ runtime: %s\n\n", EXPECTED_CPPRT);
+    name  = backEndName;
+    major = RMGR_COMPILER_BACKEND_VERSION_MAJOR;
+    minor = RMGR_COMPILER_BACKEND_VERSION_MINOR;
+    patch = RMGR_COMPILER_BACKEND_VERSION_PATCH;
+}
 
-    if (strcmp(crtName, EXPECTED_CRT) != 0)
-    {
-        fprintf(stderr, "C library mismatch\n");
-        success = false;
-    }
-    if (strcmp(cpprtName, EXPECTED_CPPRT) != 0)
-    {
-        fprintf(stderr, "C++ library mismatch\n");
-        success = false;
-    }
 
-    return success;
+bool rmgr_identify_compiler_variant(const char*& name, unsigned& major, unsigned& minor, unsigned& patch)
+{
+#if RMGR_COMPILER_VARIANT_IS_UNKNOWN
+    static const char variantName[] = {"<unknown>"};
+#endif
+#if RMGR_COMPILER_VARIANT_IS_AOCC
+    static const char variantName[] = {"AOCC"};
+#endif
+#if RMGR_COMPILER_VARIANT_IS_ICX
+    static const char variantName[] = {"ICX"};
+#endif
+#if RMGR_COMPILER_VARIANT_IS_MINGW
+    static const char variantName[] = {"MinGW"};
+#endif
+
+    name  = variantName;
+#if !RMGR_COMPILER_VARIANT_IS_UNKNOWN
+    major = RMGR_COMPILER_VARIANT_VERSION_MAJOR;
+    minor = RMGR_COMPILER_VARIANT_VERSION_MINOR;
+    patch = RMGR_COMPILER_VARIANT_VERSION_PATCH;
+#endif
+
+    return !RMGR_COMPILER_VARIANT_IS_UNKNOWN;
 }
