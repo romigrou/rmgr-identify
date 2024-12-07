@@ -5,6 +5,14 @@
 #include <cstring>
 
 
+#ifndef EXPECTED_VARIANT
+    #define EXPECTED_VARIANT "<unknown>"
+#endif
+#ifndef EXPECTED_VARIANT_VERSION
+    #define EXPECTED_VARIANT_VERSION ""
+#endif
+
+
 using namespace std;
 
 
@@ -56,10 +64,8 @@ static bool rmgr_identify_compiler_tests()
     printf("Expected front-end: %s %s\n\n", EXPECTED_FRONTEND, EXPECTED_FRONTEND_VERSION);
     printf("Detected back-end:  %s %s\n",   backendName, backendVersion);
     printf("Expected back-end:  %s %s\n\n", EXPECTED_BACKEND, EXPECTED_BACKEND_VERSION);
-#ifdef EXPECTED_VARIANT
     printf("Detected variant:   %s %s\n",   variantName, variantVersion);
     printf("Expected variant:   %s %s\n\n", EXPECTED_VARIANT, EXPECTED_VARIANT_VERSION);
-#endif
 
     if (strcmp(frontendName, EXPECTED_FRONTEND) != 0)
     {
@@ -83,7 +89,6 @@ static bool rmgr_identify_compiler_tests()
         success = false;
     }
 
-#ifdef EXPECTED_VARIANT
     if (strcmp(variantName, EXPECTED_VARIANT) != 0)
     {
         fprintf(stderr, "Variant mismatch\n");
@@ -94,7 +99,6 @@ static bool rmgr_identify_compiler_tests()
         fprintf(stderr, "Variant version mismatch\n");
         success = false;
     }
-#endif
 
     return success;
 }

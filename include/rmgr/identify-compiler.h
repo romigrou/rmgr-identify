@@ -296,11 +296,15 @@
 
 #ifdef __MINGW32__
     /**
-     * @def   RMGR_COMPILER_VARIANT_IS_IMINGW
+     * @def   RMGR_COMPILER_VARIANT_IS_MINGW
      * @brief Whether the compiler variant is MinGW (32 or 64)
      */
     #define RMGR_COMPILER_VARIANT_IS_MINGW    (1)
     #define RMGR_COMPILER_VARIANT_IS_UNKNOWN  (0)
+    #include <_mingw_mac.h>
+    #define RMGR_COMPILER_VARIANT_VERSION_MAJOR  (__MINGW64_VERSION_MAJOR)
+    #define RMGR_COMPILER_VARIANT_VERSION_MINOR  (__MINGW64_VERSION_MINOR)
+    #define RMGR_COMPILER_VARIANT_VERSION_PATCH  (__MINGW64_VERSION_BUGFIX)
 #elif RMGR_COMPILER_FRONTEND_IS_CLANG && RMGR_COMPILER_BACKEND_IS_LLVM
     #if defined(__aocc__)
         /**
