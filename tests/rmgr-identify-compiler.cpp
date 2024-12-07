@@ -52,29 +52,14 @@
  */
 
 #include <rmgr/identify-compiler.h>
-#include <cstdio>
-#include <cstring>
+#include "rmgr-identify-tests.h"
 
 
-bool check_version_numbers(const char* v1, const char* v2);
-
-
-#ifndef EXPECTED_VARIANT_VERSION
-    #ifdef EXPECTED_VARIANT_VERSION_MAJOR
-        #define STRINGIFY(a)              DO_STRINGIFY(a)
-        #define DO_STRINGIFY(a)           #a
-        #define EXPECTED_VARIANT_VERSION  STRINGIFY(EXPECTED_VARIANT_VERSION_MAJOR) "." STRINGIFY(EXPECTED_VARIANT_VERSION_MINOR) "." STRINGIFY(EXPECTED_VARIANT_VERSION_PATCH)
-    #else
-        #define EXPECTED_VARIANT_VERSION  ""
-    #endif
-#endif
-
-
-bool rmgr_identify_compiler_tests()
+void rmgr_identify_compiler_frontend(const char*& name, unsigned& major, unsigned& minor, unsigned& patch)
 {
-    bool success = true;
-
-
+#if RMGR_COMPILER_FRONTEND_IS_BORLAND
+    static const char frontEndName[] = {"Borland"};
+#endif
 #if RMGR_COMPILER_FRONTEND_IS_CLANG
     static const char frontEndName[] = {"Clang"};
 #endif
@@ -88,7 +73,18 @@ bool rmgr_identify_compiler_tests()
     static const char frontEndName[] = {"MSVC"};
 #endif
 
+    name  = frontEndName;
+    major = RMGR_COMPILER_FRONTEND_VERSION_MAJOR;
+    minor = RMGR_COMPILER_FRONTEND_VERSION_MINOR;
+    patch = RMGR_COMPILER_FRONTEND_VERSION_PATCH;
+}
 
+
+void rmgr_identify_compiler_backend(const char*& name, unsigned& major, unsigned& minor, unsigned& patch)
+{
+#if RMGR_COMPILER_BACKEND_IS_BORLAND
+    static const char backEndName[] = {"Borland"};
+#endif
 #if RMGR_COMPILER_BACKEND_IS_GCC
     static const char backEndName[] = {"GCC"};
 #endif
@@ -102,7 +98,18 @@ bool rmgr_identify_compiler_tests()
     static const char backEndName[] = {"MSVC"};
 #endif
 
+    name  = backEndName;
+    major = RMGR_COMPILER_BACKEND_VERSION_MAJOR;
+    minor = RMGR_COMPILER_BACKEND_VERSION_MINOR;
+    patch = RMGR_COMPILER_BACKEND_VERSION_PATCH;
+}
 
+
+bool rmgr_identify_compiler_variant(const char*& name, unsigned& major, unsigned& minor, unsigned& patch)
+{
+#if RMGR_COMPILER_VARIANT_IS_UNKNOWN
+    static const char variantName[] = {"<unknown>"};
+#endif
 #if RMGR_COMPILER_VARIANT_IS_AOCC
     static const char variantName[] = {"AOCC"};
 #endif
@@ -113,64 +120,16 @@ bool rmgr_identify_compiler_tests()
     static const char variantName[] = {"MinGW"};
 #endif
 
-
-    char frontEndVersion[64];
-    snprintf(frontEndVersion, sizeof(frontEndVersion), "%u.%u.%u", RMGR_COMPILER_FRONTEND_VERSION_MAJOR, RMGR_COMPILER_FRONTEND_VERSION_MINOR, RMGR_COMPILER_FRONTEND_VERSION_PATCH);
-
-    char backEndVersion[64];
-    snprintf(backEndVersion, sizeof(backEndVersion), "%u.%u.%u", RMGR_COMPILER_BACKEND_VERSION_MAJOR, RMGR_COMPILER_BACKEND_VERSION_MINOR, RMGR_COMPILER_BACKEND_VERSION_PATCH);
-
-#ifdef RMGR_COMPILER_VARIANT_VERSION_MAJOR
-    char variantVersion[64];
-    snprintf(variantVersion, sizeof(variantVersion), "%u.%u.%u", RMGR_COMPILER_VARIANT_VERSION_MAJOR, RMGR_COMPILER_VARIANT_VERSION_MINOR, RMGR_COMPILER_VARIANT_VERSION_PATCH);
+    name  = variantName;
+#if !RMGR_COMPILER_VARIANT_IS_UNKNOWN
+    major = RMGR_COMPILER_VARIANT_VERSION_MAJOR;
+    minor = RMGR_COMPILER_VARIANT_VERSION_MINOR;
+    patch = RMGR_COMPILER_VARIANT_VERSION_PATCH;
 #else
-    static const char variantVersion[] = {""};
-    (void)variantVersion;
+    (void)major;
+    (void)minor;
+    (void)patch;
 #endif
 
-    printf("Detected front-end: %s %s\n",   frontEndName, frontEndVersion);
-    printf("Expected front-end: %s %s\n\n", EXPECTED_FRONTEND, EXPECTED_FRONTEND_VERSION);
-    printf("Detected back-end:  %s %s\n",   backEndName, backEndVersion);
-    printf("Expected back-end:  %s %s\n\n", EXPECTED_BACKEND, EXPECTED_BACKEND_VERSION);
-#ifdef EXPECTED_VARIANT
-    printf("Detected variant:   %s %s\n",   variantName, variantVersion);
-    printf("Expected variant:   %s %s\n\n", EXPECTED_VARIANT, EXPECTED_VARIANT_VERSION);
-#endif
-
-    if (strcmp(frontEndName, EXPECTED_FRONTEND) != 0)
-    {
-        fprintf(stderr, "Front-end mismatch\n");
-        success = false;
-    }
-    if (!check_version_numbers(frontEndVersion, EXPECTED_FRONTEND_VERSION))
-    {
-        fprintf(stderr, "Front-end version mismatch\n");
-        success = false;
-    }
-
-    if (strcmp(backEndName, EXPECTED_BACKEND) != 0)
-    {
-        fprintf(stderr, "Back-end mismatch\n");
-        success = false;
-    }
-    if (!check_version_numbers(backEndVersion, EXPECTED_BACKEND_VERSION))
-    {
-        fprintf(stderr, "Back-end version mismatch\n");
-        success = false;
-    }
-
-#ifdef EXPECTED_VARIANT
-    if (strcmp(variantName, EXPECTED_VARIANT) != 0)
-    {
-        fprintf(stderr, "Variant mismatch\n");
-        success = false;
-    }
-    if (strcmp(variantVersion, EXPECTED_VARIANT_VERSION) != 0)
-    {
-        fprintf(stderr, "Variant version mismatch\n");
-        success = false;
-    }
-#endif
-
-    return success;
+    return !RMGR_COMPILER_VARIANT_IS_UNKNOWN;
 }
