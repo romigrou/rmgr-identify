@@ -142,6 +142,11 @@
         /* This check is just for extra safety but, AFAIK, MSVCRT is the only C library used on Windows */
         #define RMGR_CRT_IS_UNKNOWN  (1)
         #error Expected C runtime library was MSVCRT but appears not to be the case
+    #elif _MSC_VER < 1600
+        /* Prior to VS2010 crtversion.h is not available, compute a best-effort version number */
+        #define RMGR_CRT_IS_MSVCRT      (1)
+        #define RMGR_CRT_VERSION_MAJOR  ((_MSC_VER / 100) - 6)
+        #define RMGR_CRT_VERSION_MINOR  ((_MSC_VER % 100) / 10)
     #else
         #include <crtversion.h>
         /**
@@ -157,7 +162,7 @@
     #define RMGR_CRT_IS_UNKNOWN     (1)
 #endif
 
-#if RMGR_CRT_IS_UNKNOWN && !defined(RMGR_ID_NO_FAILURE)
+#if defined(RMGR_CRT_IS_UNKNOWN) && RMGR_CRT_IS_UNKNOWN && !defined(RMGR_ID_NO_FAILURE)
     #error Unsupported/unrecognized C library
 #endif
 
@@ -200,6 +205,8 @@
         #include <__config>
     #elif __has_include(<_stlport_version.h>)
         #include <_stlport_version.h>
+    #elif __has_include(<ciso646>)
+        #include <ciso646>
     #else
         #define INTERNAL_RMGR_CRT_NO_PINPOINTED_HEADER
     #endif
@@ -208,7 +215,7 @@
 #endif
 #ifdef INTERNAL_RMGR_CRT_NO_PINPOINTED_HEADER
     #undef INTERNAL_RMGR_CRT_NO_PINPOINTED_HEADER
-    #include <cstring>
+    #include <new>
 #endif
 
 #if defined(__GLIBCXX__) || defined(__GLIBCPP__)
