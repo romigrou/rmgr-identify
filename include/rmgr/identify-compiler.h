@@ -188,7 +188,7 @@
 /* Identify compiler back-end                                                */
 
 #if    defined(__llvm__) \
-    || (defined(__INTELLISENSE__) && defined(__clang__) && _MSC_VER >= 1920) /* Workaround for Intellisense not definining __llvm__ */
+    || (defined(__INTELLISENSE__) && defined(__clang__) && _MSC_VER >= 1920) /* Workaround for Intellisense not defining __llvm__ */
     /**
      * @def   RMGR_COMPILER_BACKEND_IS_LLVM
      * @brief Whether the compiler back-end is LLVM

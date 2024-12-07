@@ -63,7 +63,7 @@ modest project, but please have a look at [how CMake handles that](https://cmake
 
 Identifying both the front-end and the back-end is not always sufficient as there may be several
 variants of that pair. Clang/LLVM is a perfect example: MinGW, Intel and ARM all provide compilers
-derived from Clang/LVVM.
+derived from Clang/LLVM.
 
 ### A Few Little-Known Combinations
 
