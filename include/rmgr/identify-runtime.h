@@ -257,15 +257,33 @@
     #define RMGR_CPPRT_VERSION_MINOR  ((_RWSTD_VER >> 16) & 0xFF)
     #define RMGR_CPPRT_VERSION_PATCH  ((_RWSTD_VER >>_ 8) & 0xFF)
 
-#elif RMGR_CRT_IS_MSVCRT
+#elif defined(_MSVC_STL_UPDATE)
     /**
-     * @def   RMGR_CPPRT_IS_MSVCRT
-     * @brief Whether the C++ library is MSVCRT
+     * @def   RMGR_CPPRT_IS_MSSTL
+     * @brief Whether the C++ library is MS STL
+     *
+     * @note Prior to Visual C++ 2017 15.5 (which corresponds to MSVC 19.12),
+     *       MS STL identified itself as Dinkumware's STL.
+     *       See https://devblogs.microsoft.com/cppblog/c17-progress-in-vs-2017-15-5-and-15-6/
+     *       and https://github.com/microsoft/STL/wiki/Macro-_MSVC_STL_UPDATE
      */
-    #define RMGR_CPPRT_IS_MSVCRT      (1)
-    #define RMGR_CPPRT_VERSION_MAJOR  RMGR_CRT_VERSION_MAJOR
-    #define RMGR_CPPRT_VERSION_MINOR  RMGR_CRT_VERSION_MINOR
-    #define RMGR_CPPRT_VERSION_PATCH  RMGR_CRT_VERSION_PATCH
+    #define RMGR_CPPRT_IS_MSSTL       (1)
+    #define RMGR_CPPRT_VERSION_MAJOR  (_MSVC_STL_UPDATE / 100)
+    #define RMGR_CPPRT_VERSION_MINOR  (_MSVC_STL_UPDATE % 100)
+    
+#elif defined(_CPPLIB_VER)
+    /**
+     * @def   RMGR_CPPRT_IS_DINKUMWARE
+     * @brief Whether the C++ library is Dinkumware's
+     *
+     * @note Prior to Visual C++ 2017 15.5 (which corresponds to MSVC 19.12),
+     *       MS STL identified itself as Dinkumware's STL.
+     *       See https://devblogs.microsoft.com/cppblog/c17-progress-in-vs-2017-15-5-and-15-6/
+     *       and https://github.com/microsoft/STL/wiki/Macro-_MSVC_STL_UPDATE
+     */
+    #define RMGR_CPPRT_IS_DINKUMWARE  (1)
+    #define RMGR_CPPRT_VERSION_MAJOR  (_CPPLIB_VER / 100)
+    #define RMGR_CPPRT_VERSION_MINOR  (_CPPLIB_VER % 100)
 
 #elif defined(RMGR_ID_NO_FAILURE)
     #define RMGR_CPPRT_IS_UNKNOWN     (1)
@@ -275,14 +293,17 @@
 
 
 /* Set default values to undefined macros */
+#ifndef RMGR_CPPRT_IS_DINKUMWARE
+    #define RMGR_CPPRT_IS_DINKUMWARE  (0)
+#endif
 #ifndef RMGR_CPPRT_IS_LIBCPP
     #define RMGR_CPPRT_IS_LIBCPP      (0)
 #endif
 #ifndef RMGR_CPPRT_IS_LIBSTDCPP
     #define RMGR_CPPRT_IS_LIBSTDCPP   (0)
 #endif
-#ifndef RMGR_CPPRT_IS_MSVCRT
-    #define RMGR_CPPRT_IS_MSVCRT      (0)
+#ifndef RMGR_CPPRT_IS_MSSTL
+    #define RMGR_CPPRT_IS_MSSTL       (0)
 #endif
 #ifndef RMGR_CPPRT_IS_RWSTD
     #define RMGR_CPPRT_IS_RWSTD       (0)
