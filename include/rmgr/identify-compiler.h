@@ -78,7 +78,8 @@
 #elif defined(__EDG__) && (!defined(__INTELLISENSE__) || defined(__INTEL_COMPILER))
     /* Note: Intel ICC uses the EDG frontend, just as Intellisense does, hence the above conditon.
      *       However, the EDG version used for syntax higlighting will be that of Intellisense,
-     *       which is not perfect but should be good enough */
+     *       which is not perfect but should be good enough.
+     */
 
     /**
      * @def   RMGR_COMPILER_FRONTEND_IS_EDG
@@ -115,6 +116,16 @@
         #define RMGR_COMPILER_FRONTEND_VERSION_PATCH  (__clang_patchlevel__)
     #endif
 
+#elif defined(__BORLANDC__)
+    /**
+     * @def   RMGR_COMPILER_FRONTEND_IS_BORLAND
+     * @brief Whether the compiler front-end is Borland
+     */
+    #define RMGR_COMPILER_FRONTEND_IS_BORLAND     (1)
+    #define RMGR_COMPILER_FRONTEND_VERSION_MAJOR  (__BORLANDC__ >> 8)
+    #define RMGR_COMPILER_FRONTEND_VERSION_MINOR  ((__BORLANDC__ >> 4) & 0xF)
+    #define RMGR_COMPILER_FRONTEND_VERSION_PATCH  (__BORLANDC__ & 0xF)
+
 #elif defined(_MSC_VER)
     /**
      * @def   RMGR_COMPILER_FRONTEND_IS_MSVC
@@ -147,6 +158,9 @@
 
 
 /* Set default values to undefined macros */
+#ifndef RMGR_COMPILER_FRONTEND_IS_BORLAND
+    #define RMGR_COMPILER_FRONTEND_IS_BORLAND     (0)
+#endif
 #ifndef RMGR_COMPILER_FRONTEND_IS_CLANG
     #define RMGR_COMPILER_FRONTEND_IS_CLANG       (0)
 #endif
@@ -207,6 +221,16 @@
         #endif
     #endif
 
+#elif defined(__BORLANDC__)
+    /**
+     * @def   RMGR_COMPILER_BACKEND_IS_BORLAND
+     * @brief Whether the compiler back-end is Borland
+     */
+    #define RMGR_COMPILER_BACKEND_IS_BORLAND     (1)
+    #define RMGR_COMPILER_BACKEND_VERSION_MAJOR  (__BORLANDC__ >> 8)
+    #define RMGR_COMPILER_BACKEND_VERSION_MINOR  ((__BORLANDC__ >> 4) & 0xF)
+    #define RMGR_COMPILER_BACKEND_VERSION_PATCH  (__BORLANDC__ & 0xF)
+
 #elif defined(_MSC_VER)
     /**
      * @def   RMGR_COMPILER_FRONTEND_IS_MSVC
@@ -239,6 +263,9 @@
 
 
 /* Set default values to undefined macros */
+#ifndef RMGR_COMPILER_BACKEND_IS_BORLAND
+    #define RMGR_COMPILER_BACKEND_IS_BORLAND     (0)
+#endif
 #ifndef RMGR_COMPILER_BACKEND_IS_GCC
     #define RMGR_COMPILER_BACKEND_IS_GCC         (0)
 #endif
@@ -262,8 +289,18 @@
 /* ========================================================================= */
 /* Identify compiler variant                                                 */
 
+/**
+ * @def   RMGR_COMPILER_VARIANT_IS_UNKNOWN
+ * @brief If non-zero, the compiler variant is unknown (or is not a variant at all)
+ */
+
 #ifdef __MINGW32__
-    #define RMGR_COMPILER_VARIANT_IS_MINGW  (1)
+    /**
+     * @def   RMGR_COMPILER_VARIANT_IS_IMINGW
+     * @brief Whether the compiler variant is MinGW (32 or 64)
+     */
+    #define RMGR_COMPILER_VARIANT_IS_MINGW    (1)
+    #define RMGR_COMPILER_VARIANT_IS_UNKNOWN  (0)
 #elif RMGR_COMPILER_FRONTEND_IS_CLANG && RMGR_COMPILER_BACKEND_IS_LLVM
     #if defined(__aocc__)
         /**
@@ -271,6 +308,7 @@
          * @brief Whether the compiler variant is AMD Optimizing C/C++
          */
         #define RMGR_COMPILER_VARIANT_IS_AOCC        (1)
+        #define RMGR_COMPILER_VARIANT_IS_UNKNOWN     (0)
         #define RMGR_COMPILER_VARIANT_VERSION_MAJOR  (__aocc_major__)
         #define RMGR_COMPILER_VARIANT_VERSION_MINOR  (__aocc_minor__)
         #define RMGR_COMPILER_VARIANT_VERSION_PATCH  (__aocc_patchlevel__)
@@ -280,6 +318,7 @@
          * @brief Whether the compiler variant is Intel oneAPI DPC++/C++
          */
         #define RMGR_COMPILER_VARIANT_IS_ICX         (1)
+        #define RMGR_COMPILER_VARIANT_IS_UNKNOWN     (0)
         #if __INTEL_CLANG_COMPILER >= 20000000
             #define RMGR_COMPILER_VARIANT_VERSION_MAJOR  (__INTEL_CLANG_COMPILER / 10000)
             #define RMGR_COMPILER_VARIANT_VERSION_MINOR  ((__INTEL_CLANG_COMPILER / 100) % 100)
@@ -289,27 +328,22 @@
             #define RMGR_COMPILER_VARIANT_VERSION_MINOR  (__INTEL_CLANG_COMPILER % 100)
             #define RMGR_COMPILER_VARIANT_VERSION_PATCH  (0)
         #endif
-    #else
-        #define RMGR_COMPILER_VARIANT_IS_UNKNOWN     (1)
     #endif
-#else
-    /**
-     * @def   RMGR_COMPILER_VARIANT_IS_UNKNOWN
-     * @brief If non-zero, the compiler variant is unknown (or is not a variant at all)
-     */
-    #define RMGR_COMPILER_VARIANT_IS_UNKNOWN     (1)
 #endif
 
 
 /* Set default values to undefined macros */
 #ifndef RMGR_COMPILER_VARIANT_IS_AOCC
-    #define RMGR_COMPILER_VARIANT_IS_AOCC   (0)
+    #define RMGR_COMPILER_VARIANT_IS_AOCC     (0)
 #endif
 #ifndef RMGR_COMPILER_VARIANT_IS_ICX
-    #define RMGR_COMPILER_VARIANT_IS_ICX    (0)
+    #define RMGR_COMPILER_VARIANT_IS_ICX      (0)
 #endif
 #ifndef RMGR_COMPILER_VARIANT_IS_MINGW
-    #define RMGR_COMPILER_VARIANT_IS_MINGW  (0)
+    #define RMGR_COMPILER_VARIANT_IS_MINGW    (0)
+#endif
+#ifndef RMGR_COMPILER_VARIANT_IS_UNKNOWN
+    #define RMGR_COMPILER_VARIANT_IS_UNKNOWN  (1)
 #endif
 
 

@@ -121,7 +121,12 @@
     #define RMGR_CRT_VERSION_PATCH  (0)
 
 #elif defined(_WIN32)
-    #ifdef __MINGW32__
+    #ifdef __BORLANDC__
+        #define RMGR_CRT_IS_BORLAND     (1)
+        #define RMGR_CRT_VERSION_MAJOR  (__BORLANDC__ >> 8)
+        #define RMGR_CRT_VERSION_MINOR  ((__BORLANDC__ >> 4) & 0xF)
+        #define RMGR_CRT_VERSION_PATCH  (__BORLANDC__ & 0xF)
+    #elif defined(__MINGW32__)
         #include <_mingw.h>
         #define RMGR_CRT_IS_MSVCRT  (1)
         #ifdef MSVCRT_VERSION
@@ -160,6 +165,9 @@
 /* Set default values to undefined macros */
 #ifndef RMGR_CRT_IS_BIONIC
     #define RMGR_CRT_IS_BIONIC      (0)
+#endif
+#ifndef RMGR_CRT_IS_BORLAND
+    #define RMGR_CRT_IS_BORLAND     (0)
 #endif
 #ifndef RMGR_CRT_IS_GLIBC
     #define RMGR_CRT_IS_GLIBC       (0)
