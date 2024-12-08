@@ -75,6 +75,9 @@ void rmgr_identify_cpp_runtime(const char*& name, unsigned& major, unsigned& min
 #if RMGR_CPPRT_IS_STLPORT
     static const char cpprtName[] = {"STLport"};
 #endif
+#if RMGR_CPPRT_IS_WATCOM
+    static const char cpprtName[] = {"Watcom"};
+#endif
 
     name = cpprtName;
     major = RMGR_CPPRT_VERSION_MAJOR;

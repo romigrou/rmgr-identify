@@ -54,7 +54,8 @@ static bool rmgr_identify_compiler_tests()
     char backendVersion[64];
     snprintf(backendVersion, sizeof(backendVersion), "%u.%u.%u", backendVersionMajor, backendVersionMinor, backendVersionPatch);
 
-    char variantVersion[64] = {};
+    char variantVersion[64];
+    memset(variantVersion, 0, sizeof(variantVersion));
     if (variantIdentified)
     {
         snprintf(variantVersion, sizeof(variantVersion), "%u.%u.%u", variantVersionMajor, variantVersionMinor, variantVersionPatch);
@@ -94,7 +95,7 @@ static bool rmgr_identify_compiler_tests()
         fprintf(stderr, "Variant mismatch\n");
         success = false;
     }
-    if (strcmp(variantVersion, EXPECTED_VARIANT_VERSION) != 0)
+    if (!check_version_numbers(variantVersion, EXPECTED_VARIANT_VERSION))
     {
         fprintf(stderr, "Variant version mismatch\n");
         success = false;

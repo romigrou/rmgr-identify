@@ -126,6 +126,18 @@
     #define RMGR_COMPILER_FRONTEND_VERSION_MINOR  ((__BORLANDC__ >> 4) & 0xF)
     #define RMGR_COMPILER_FRONTEND_VERSION_PATCH  (__BORLANDC__ & 0xF)
 
+#elif defined(__WATCOMC__)
+    /**
+     * @def   RMGR_COMPILER_FRONTEND_IS_WATCOM
+     * @brief Whether the compiler front-end is Watcom
+     *
+     * @note Starting from version 12, the compiler was renamed Open Watcom and its numbering reset to 1.
+     *       See #RMGR_COMPILER_VARIANT_IS_OPEN_WATCOM.
+     */
+    #define RMGR_COMPILER_FRONTEND_IS_WATCOM      (1)
+    #define RMGR_COMPILER_FRONTEND_VERSION_MAJOR  (__WATCOMC__ / 100)
+    #define RMGR_COMPILER_FRONTEND_VERSION_MINOR  ((__WATCOMC__ % 100) / 10)
+
 #elif defined(_MSC_VER)
     /**
      * @def   RMGR_COMPILER_FRONTEND_IS_MSVC
@@ -175,6 +187,9 @@
 #endif
 #ifndef RMGR_COMPILER_FRONTEND_IS_MSVC
     #define RMGR_COMPILER_FRONTEND_IS_MSVC        (0)
+#endif
+#ifndef RMGR_COMPILER_FRONTEND_IS_WATCOM
+    #define RMGR_COMPILER_FRONTEND_IS_WATCOM      (0)
 #endif
 #ifndef RMGR_COMPILER_FRONTEND_IS_UNKNOWN
     #define RMGR_COMPILER_FRONTEND_IS_UNKNOWN     (0)
@@ -231,6 +246,18 @@
     #define RMGR_COMPILER_BACKEND_VERSION_MINOR  ((__BORLANDC__ >> 4) & 0xF)
     #define RMGR_COMPILER_BACKEND_VERSION_PATCH  (__BORLANDC__ & 0xF)
 
+#elif defined(__WATCOMC__)
+    /**
+     * @def   RMGR_COMPILER_BACKEND_IS_WATCOM
+     * @brief Whether the compiler front-end is Watcom
+     *
+     * @note Starting from version 12, the compiler was renamed Open Watcom and its numbering reset to 1.
+     *       See #RMGR_COMPILER_VARIANT_IS_OPEN_WATCOM.
+     */
+    #define RMGR_COMPILER_BACKEND_IS_WATCOM      (1)
+    #define RMGR_COMPILER_BACKEND_VERSION_MAJOR  (__WATCOMC__ / 100)
+    #define RMGR_COMPILER_BACKEND_VERSION_MINOR  ((__WATCOMC__ % 100) / 10)
+
 #elif defined(_MSC_VER)
     /**
      * @def   RMGR_COMPILER_FRONTEND_IS_MSVC
@@ -277,6 +304,9 @@
 #endif
 #ifndef RMGR_COMPILER_BACKEND_IS_MSVC
     #define RMGR_COMPILER_BACKEND_IS_MSVC        (0)
+#endif
+#ifndef RMGR_COMPILER_BACKEND_IS_WATCOM
+    #define RMGR_COMPILER_BACKEND_IS_WATCOM      (0)
 #endif
 #ifndef RMGR_COMPILER_BACKEND_VERSION_MINOR
     #define RMGR_COMPILER_BACKEND_VERSION_MINOR  (0)
@@ -333,21 +363,30 @@
             #define RMGR_COMPILER_VARIANT_VERSION_PATCH  (0)
         #endif
     #endif
+#elif defined(__WATCOMC__)
+    #define RMGR_COMPILER_VARIANT_IS_OPEN_WATCOM  (1)
+    #define RMGR_COMPILER_VARIANT_IS_UNKNOWN      (0)
+    #define RMGR_COMPILER_VARIANT_VERSION_MAJOR   ((__WATCOMC__ / 100) - 11)
+    #define RMGR_COMPILER_VARIANT_VERSION_MINOR   ((__WATCOMC__ % 100) / 10)
+    #define RMGR_COMPILER_VARIANT_VERSION_PATCH   (0)
 #endif
 
 
 /* Set default values to undefined macros */
 #ifndef RMGR_COMPILER_VARIANT_IS_AOCC
-    #define RMGR_COMPILER_VARIANT_IS_AOCC     (0)
+    #define RMGR_COMPILER_VARIANT_IS_AOCC         (0)
 #endif
 #ifndef RMGR_COMPILER_VARIANT_IS_ICX
-    #define RMGR_COMPILER_VARIANT_IS_ICX      (0)
+    #define RMGR_COMPILER_VARIANT_IS_ICX          (0)
 #endif
 #ifndef RMGR_COMPILER_VARIANT_IS_MINGW
-    #define RMGR_COMPILER_VARIANT_IS_MINGW    (0)
+    #define RMGR_COMPILER_VARIANT_IS_MINGW        (0)
+#endif
+#ifndef RMGR_COMPILER_VARIANT_IS_OPEN_WATCOM
+    #define RMGR_COMPILER_VARIANT_IS_OPEN_WATCOM  (0)
 #endif
 #ifndef RMGR_COMPILER_VARIANT_IS_UNKNOWN
-    #define RMGR_COMPILER_VARIANT_IS_UNKNOWN  (1)
+    #define RMGR_COMPILER_VARIANT_IS_UNKNOWN      (1)
 #endif
 
 
@@ -406,6 +445,7 @@
 #define RMGR_COMPILER_IS_GCC         RMGR_COMPILER_IS(GCC,   GCC)
 #define RMGR_COMPILER_IS_ICC         RMGR_COMPILER_IS(EDG,   ICC)
 #define RMGR_COMPILER_IS_MSVC        RMGR_COMPILER_IS(MSVC,  MSVC)
+#define RMGR_COMPILER_IS_WATCOM      RMGR_COMPILER_IS(WATCOM,WATCOM)
 
 
 /* Front-end + back-end + version */

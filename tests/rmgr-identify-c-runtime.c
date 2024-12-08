@@ -71,6 +71,9 @@ void rmgr_identify_c_runtime(const char** name, unsigned* major, unsigned* minor
 #if RMGR_CRT_IS_NEWLIB
     static const char crtName[] = {"Newlib"};
 #endif
+#if RMGR_CRT_IS_WATCOM
+    static const char crtName[] = {"Watcom"};
+#endif
 
     *name = crtName;
     *major = RMGR_CRT_VERSION_MAJOR;

@@ -71,12 +71,10 @@
 
 #ifdef INTERNAL_RMGR_CRT_NO_PINPOINTED_HEADER
     #undef INTERNAL_RMGR_CRT_NO_PINPOINTED_HEADER
-    #ifndef _WIN32 /* No need to include anything on Windows */
-        #ifdef __cplusplus
-            #include <cstring>
-        #else
-            #include "string.h"
-        #endif
+    #ifdef __cplusplus
+        #include <cstring>
+    #else
+        #include "string.h"
     #endif
 #endif
 
@@ -120,6 +118,20 @@
     #define RMGR_CRT_VERSION_MINOR  (__ANDROID_API__)
     #define RMGR_CRT_VERSION_PATCH  (0)
 
+#elif defined(_WCRTLINK) // Couldn't find a real identification macro, this should do the trick
+    /**
+     * @def   RMGR_CRT_IS_WATCOM
+     * @brief Whether the C library is Watcom's
+     *
+     * @note The library itself seems not to have any version number, let's use the compiler's.
+     *       Therefore the version macros are only defined when using the Watcom compiler.
+     */
+    #define RMGR_CRT_IS_WATCOM      (1)
+    #ifdef __WATCOMC__
+        #define RMGR_CRT_VERSION_MAJOR  (__WATCOMC__ / 100)
+        #define RMGR_CRT_VERSION_MINOR  ((__WATCOMC__ % 100) / 10)
+    #endif
+
 #elif defined(_WIN32)
     #ifdef __BORLANDC__
         #define RMGR_CRT_IS_BORLAND     (1)
@@ -139,7 +151,7 @@
             #error Cannot determine the version of MSVCRT
         #endif
     #elif defined(__has_include) && !__has_include(<vcruntime.h>)
-        /* This check is just for extra safety but, AFAIK, MSVCRT is the only C library used on Windows */
+        /* This check is for extra safety, as we expect to be dealing with MSVCRT */
         #define RMGR_CRT_IS_UNKNOWN  (1)
         #error Expected C runtime library was MSVCRT but appears not to be the case
     #elif _MSC_VER < 1600
@@ -182,6 +194,9 @@
 #endif
 #ifndef RMGR_CRT_IS_NEWLIB
     #define RMGR_CRT_IS_NEWLIB      (0)
+#endif
+#ifndef RMGR_CRT_IS_WATCOM
+    #define RMGR_CRT_IS_WATCOM      (0)
 #endif
 #ifndef RMGR_CRT_IS_UNKNOWN
     #define RMGR_CRT_IS_UNKNOWN     (0)
@@ -285,7 +300,7 @@
     #define RMGR_CPPRT_IS_MSSTL       (1)
     #define RMGR_CPPRT_VERSION_MAJOR  (_MSVC_STL_UPDATE / 100)
     #define RMGR_CPPRT_VERSION_MINOR  (_MSVC_STL_UPDATE % 100)
-    
+
 #elif defined(_CPPLIB_VER)
     /**
      * @def   RMGR_CPPRT_IS_DINKUMWARE
@@ -299,6 +314,20 @@
     #define RMGR_CPPRT_IS_DINKUMWARE  (1)
     #define RMGR_CPPRT_VERSION_MAJOR  (_CPPLIB_VER / 100)
     #define RMGR_CPPRT_VERSION_MINOR  (_CPPLIB_VER % 100)
+
+#elif defined(_WCRTLINK) // Couldn't find a real identification macro, this should do the trick
+    /**
+     * @def   RMGR_CPPRT_IS_WATCOM
+     * @brief Whether the C++ library is Watcom's
+     *
+     * @note The library itself seems not to have any version number, let's use the compiler's.
+     *       Therefore the version macros are only defined when using the Watcom compiler.
+     */
+    #define RMGR_CPPRT_IS_WATCOM      (1)
+    #ifdef __WATCOMC__
+        #define RMGR_CPPRT_VERSION_MAJOR  (__WATCOMC__ / 100)
+        #define RMGR_CPPRT_VERSION_MINOR  ((__WATCOMC__ % 100) / 10)
+    #endif
 
 #elif defined(RMGR_ID_NO_FAILURE)
     #define RMGR_CPPRT_IS_UNKNOWN     (1)
@@ -325,6 +354,9 @@
 #endif
 #ifndef RMGR_CPPRT_IS_STLPORT
     #define RMGR_CPPRT_IS_STLPORT     (0)
+#endif
+#ifndef RMGR_CPPRT_IS_WATCOM
+    #define RMGR_CPPRT_IS_WATCOM      (0)
 #endif
 #ifndef RMGR_CPPRT_IS_UNKNOWN
     #define RMGR_CPPRT_IS_UNKNOWN     (0)

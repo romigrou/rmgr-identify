@@ -72,6 +72,9 @@ void rmgr_identify_compiler_frontend(const char*& name, unsigned& major, unsigne
 #if RMGR_COMPILER_FRONTEND_IS_MSVC
     static const char frontEndName[] = {"MSVC"};
 #endif
+#if RMGR_COMPILER_FRONTEND_IS_WATCOM
+    static const char frontEndName[] = {"Watcom"};
+#endif
 
     name  = frontEndName;
     major = RMGR_COMPILER_FRONTEND_VERSION_MAJOR;
@@ -97,6 +100,9 @@ void rmgr_identify_compiler_backend(const char*& name, unsigned& major, unsigned
 #if RMGR_COMPILER_BACKEND_IS_MSVC
     static const char backEndName[] = {"MSVC"};
 #endif
+#if RMGR_COMPILER_BACKEND_IS_WATCOM
+    static const char backEndName[] = {"Watcom"};
+#endif
 
     name  = backEndName;
     major = RMGR_COMPILER_BACKEND_VERSION_MAJOR;
@@ -118,6 +124,9 @@ bool rmgr_identify_compiler_variant(const char*& name, unsigned& major, unsigned
 #endif
 #if RMGR_COMPILER_VARIANT_IS_MINGW
     static const char variantName[] = {"MinGW"};
+#endif
+#if RMGR_COMPILER_VARIANT_IS_OPEN_WATCOM
+    static const char variantName[] = {"Open Watcom"};
 #endif
 
     name  = variantName;
