@@ -55,7 +55,7 @@
 #ifndef RMGR_ID_RUNTIME_H
 #define RMGR_ID_RUNTIME_H
 
-/* The minimal header that allows us to identify the C library seems to be string.h.
+/* The minimal header that allows us to identify the C library seems to be assert.h.
    However, if we can include a more pinpointed header, let's do it. */
 #ifdef __has_include
     #if __has_include(<_newlib_version.h>)
@@ -72,9 +72,9 @@
 #ifdef INTERNAL_RMGR_CRT_NO_PINPOINTED_HEADER
     #undef INTERNAL_RMGR_CRT_NO_PINPOINTED_HEADER
     #ifdef __cplusplus
-        #include <cstring>
+        #include <cassert>
     #else
-        #include "string.h"
+        #include "assert.h"
     #endif
 #endif
 
