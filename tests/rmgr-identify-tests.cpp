@@ -8,8 +8,16 @@
 #ifndef EXPECTED_VARIANT
     #define EXPECTED_VARIANT "<unknown>"
 #endif
+#define STRINGIZE( x)  STRINGIZE_(x)
+#define STRINGIZE_(x)  #x
 #ifndef EXPECTED_VARIANT_VERSION
-    #define EXPECTED_VARIANT_VERSION ""
+    #if defined(EXPECTED_VARIANT_VERSION_PATCH)
+        #define EXPECTED_VARIANT_VERSION  STRINGIZE(EXPECTED_VARIANT_VERSION_MAJOR) "." STRINGIZE(EXPECTED_VARIANT_VERSION_MINOR) "." STRINGIZE(EXPECTED_VARIANT_VERSION_PATCH)
+    #elif defined(EXPECTED_VARIANT_VERSION_MINOR)
+        #define EXPECTED_VARIANT_VERSION  STRINGIZE(EXPECTED_VARIANT_VERSION_MAJOR) "." STRINGIZE(EXPECTED_VARIANT_VERSION_MINOR)
+    #else
+        #define EXPECTED_VARIANT_VERSION  ""
+    #endif
 #endif
 
 
@@ -19,7 +27,7 @@ using namespace std;
 static bool check_version_numbers(const char* v1, const char* v2)
 {
     if (!*v1 || !*v2)
-        return false;
+        return (*v1 == *v2); // It's valid for both strings to be empty
 
     while (*v1 && *v1==*v2)
     {
